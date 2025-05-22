@@ -1,0 +1,49 @@
+content {
+    max-width: 1200px;
+    margin: 0 auto;
+    box-sizing: border-box;
+    padding: 40px;
+    display: block;
+}
+buttons {
+    display: block;
+    padding-bottom: 40px;
+}
+
+alias {
+    display: flex;
+    align-items: center;
+    padding-bottom: 40px;
+}
+
+#inputAlias{
+    font-size: 2rem;
+    font-weight: bold;
+    font: monospace;
+    border: none;
+    outline: none;
+    background: whitesmoke;
+    border-radius: 15px;
+    margin-left: 30px;
+    width: 1300px;
+    
+}
+
+@media (max-width: 570px){
+    #inputAlias{
+        min-width: 200px;
+    }
+}
+
+
+.infoSpan {
+    font-weight: bold;
+    border: none;
+    width: 500px;
+}
+
+#quill{
+    min-height: 150px;
+    margin-bottom: 500px;
+}
+

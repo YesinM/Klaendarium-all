@@ -1,0 +1,409 @@
+@font-face {
+    font-family: "Glyphicons Halflings";
+    src: url("https://al.edu.pl/templates/pwsiip-uczelnia-2015/fonts/glyphicons-halflings-regular.woff2") format("woff2"), url('fonts/glyphicons-halflings-regular.ttf') format('truetype'), url('fonts/glyphicons-halflings-regular.svg') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+body{
+    font-size: 1rem;
+}
+
+th, td {
+    padding: 0px;
+}
+
+p{
+    font-size: 1rem;
+}
+
+.middle4{
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+root {
+    display: block;
+}
+
+table.cal {
+    font-size: 1rem;  
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.cal-day-name{
+}
+
+.cal-month-name {
+    font-size: 1rem;
+    line-height: 2;
+    font-weight: bold;
+}
+
+.event-header{
+    font-size: 2rem;
+    line-height: 2;
+    color: #333;
+}
+
+.cal-year{
+    font-size: 1rem;
+}
+
+.cal-day{
+    padding: 0px;
+    text-align: center;
+    border-top: 1px solid lightgray;
+    border-left: 1px solid lightgray;
+}
+
+.cal-day-number{
+    padding: 10px 15px 10px 15px;
+    display: block;
+}
+
+caption {
+    text-align: center !important;
+    caption-side: top !important;
+}
+
+th[abbr] {
+    padding: 10px;
+    border-left: 1px solid lightgray;
+    background-color: #f8f8f8;
+}
+
+.cal-day.other-month a{
+    text-decoration: none;
+    color: lightgray;
+}
+
+.cal-day.this-month a{
+    text-decoration: none;
+    color: gray;
+}
+
+.cal-day.work-time a{
+    text-decoration: none;
+    color: #1785c4;
+    font-weight: bold;
+}
+
+tr td:nth-child(2), tr th:nth-child(2){
+    border-left: 0px solid lightgray;
+}
+
+.module-event-date::first-line {
+    color: #ffffff;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.category-module li > a, .events-title > a {
+    color: #a92f33;
+    display: inline-block;
+    font-size: 1rem;
+    font-weight: bold;
+    margin-bottom: 15px;
+    margin-top: 0px;
+    padding-left: 10px;
+    text-decoration: none;
+}
+
+.events-header {
+    list-style: outside none none;
+    min-height: 4em;
+    padding-left: 3em;
+    position: relative;
+}
+
+.events-title > a {
+    color: #000 !important;
+    font-weight: normal !important;
+}
+
+
+.module-event, .module-calendar{
+    float: left;
+    margin: 0px;
+    /*    padding-left: 40px;
+        padding-right: 40px;*/
+}
+
+.module-event.width_100p{
+    width: 100%;
+}
+
+li.events-title{
+    font-size: 100%;
+    position: relative;
+}
+
+.events-header{
+    font-size: 2rem;
+}
+
+.n_month, .p_month {
+    padding: 5px;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 1rem !important;
+}
+
+.content{
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px;
+    display: flow-root;
+    clear: both;
+}
+
+.module-event, .module-calendar {
+    margin-right: 50px;
+}
+
+.module_readmore{
+    float: none;
+}
+
+.breadcrumb {
+    font-size: 0.85em;
+    padding: 0;
+    text-align: left;
+}
+
+.breadcrumb {
+    list-style-type: none;
+}
+
+.breadcrumb li{
+    list-style-type: none;
+    display: inline;
+    padding: 0px;
+}
+
+.breadcrumb a {
+    padding: 0;
+}
+
+.breadcrumb a:link, .breadcrumb a:visited {
+    font-weight: normal;
+    text-transform: none;
+}
+
+.breadcrumb a:hover, .breadcrumb a:active, .breadcrumb a:focus {
+    text-decoration: none;
+    color: #a92f33;
+}
+
+ul.share-buttons{
+    list-style: none;
+    padding: 0;
+    margin-top: 30px;
+}
+
+ul.share-buttons li::before, ul li.events-title::before{
+    content: "";
+}
+
+ul.share-buttons li{
+    display: inline;
+}
+
+.events-title .events-header{
+    /*height: 2em;*/
+    margin-bottom: 18px;
+}
+/*
+.module-event-date {
+    left: -14px;
+}*/
+
+.btn{ 
+    padding: 6px 12px;
+}
+
+.linia_l{
+    position:fixed;
+    width: 100%;
+    height: 5px;
+    background-color: red;
+    display: block;
+    z-index: 10000;
+    -moz-box-shadow: 1px 3px 5px #000000;
+    -webkit-box-shadow: 1px 3px 5px #000000;
+    box-shadow: 1px 3px 5px #000000;
+}
+
+.linia_l:hover{
+    height: 50px;
+    background-color: lime;
+    animation-name: example;
+    animation-duration: 1s;
+}
+
+@keyframes example {
+    from {background-color: red; height: 5px;}
+    to {background-color: lime; height: 50px;}
+}
+
+.breadcrumb img{
+    display: none;
+}
+
+.content_tabs.youtube {
+    display: none;
+}
+
+.events-title > a{
+    margin-left: 10px;
+    margin-top: 15px;
+}
+
+.artykuly ul {
+    padding-left: 0px;
+}
+
+.module-calendar{
+    margin: 0px;
+}
+
+ul.share-buttons{
+    display: none;
+}
+
+.breadcrumb {
+    padding-left: 40px;
+}
+
+.cal-day-number {
+    background-color: #fff;
+}
+
+.cal-day.work-time a {
+    color: #a92f33;
+}
+
+th {
+    text-align: center;
+}
+
+.module-calendar{
+    height: 100%;
+    padding-bottom: 20px;
+    display: none;
+}
+
+.module-event .event-header{
+    margin: 0 4px 0 0;
+}
+
+.module-event .module_readmore::before {
+    font-family: 'Glyphicons Halflings';
+    content: "\e029";
+    color: #a92f33 !important;
+}
+
+.module_readmore {
+    color: #a92f33 !important;
+}
+
+a.module_readmore::before {
+    display: inline;
+}
+
+.module-event-date::first-line {
+    color: #444;
+    font-weight: 700
+}
+
+.module-event.width_100p li.events-title {
+    list-style: none;
+}
+
+article ul{
+    margin-left: 20px;
+}
+
+.module-event a{
+}
+
+.events-title>a, .youtube-module li>a {
+    display: inline-block;
+    color: #BE1E2D;
+    font-size: 1rem;
+    font-weight: 600;
+    padding-left: 0;
+}
+
+li.events-title {
+    width: 100%;
+    min-height: 65px;
+    position: relative;
+    padding-left: 0;
+    list-style: none;
+    font-size: 22px;
+    border-radius: 2px;
+    float: left;
+    margin-left: 0;
+    margin-bottom: 5px;
+}
+
+.events-title a:hover{
+    text-decoration: underline;
+}
+
+
+#cookies-message {
+    font-size: 0.8rem;
+}
+
+
+@media only all and (max-width: 1100px) {
+
+    .breadcrumb {
+        padding-top: 15px;
+    }
+
+    .content {    
+        display: block;
+        padding-top: 15px;
+    }
+
+    .module-calendar{
+        margin: 0px;
+        width: 100%;
+    }
+
+    .module-event.width_100p {
+        width: 100%;
+    }
+
+    .module-event {
+        width: 100%;
+        margin: 0px;        
+    }
+
+    .module-event, .module-calendar {
+        margin-right: 0px;
+    }
+}
+
+
+@media only all and (max-width: 680px) {
+
+    .events-header {
+        font-size: 1.6rem;
+        word-break: break-word;
+        overflow-wrap: break-word;
+    }
+
+    .content {
+        padding: 20px;
+    }
+
+    .breadcrumb {
+        padding-left: 20px;
+    }
+}
