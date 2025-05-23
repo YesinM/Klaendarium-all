@@ -3,8 +3,6 @@ import { reactive, onMounted, ref, watch } from 'vue'
 import dayjs from 'dayjs'
 import 'dayjs/locale/pl'
 
- const dateList = ref([])
-
  dayjs.locale('pl')
 
 function localDate(rawDate){
@@ -15,12 +13,7 @@ function localDate(rawDate){
     return day + ' '+ month.charAt(0).toUpperCase() + month.slice(1) // maj ==> Maj
 }
 
-const filtrYear = ref('');
-
-watch(filtrYear, () => {
-    
-})
-
+const dateList = ref([])
 onMounted(async () => {
     const response = await fetch('/api/all');
     const data = await response.json()

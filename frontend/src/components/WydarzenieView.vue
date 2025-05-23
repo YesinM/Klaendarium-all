@@ -5,42 +5,20 @@
 
     const route = useRoute();
     let wydarzenieID = route.query.id;
-    watch(() => route.fullPath, () => {
-        window.location.reload()
-    })
-
-    const today = new Date();
-    let month = today.toLocaleString('pl-PL', {month: 'short'});
-    month = month.slice(0,1).toUpperCase() + month.slice(1); // month --> Month
-    let year = today.toLocaleString('pl-PL', {year: 'numeric'}); 
-    let day = today.toLocaleString('pl-PL', {day: 'numeric'});
     
     const dataWydarzenia = reactive({
             //id:
             //nazwa: title,
             Alias: '',
             Opis: '',
-            DataStart: today,
-            DataStop: today,
+            DataStart: '',
+            DataStop: '',
             Organizator: 'Akademia Łomżyńska',
             Lokalizacja: 'Akademicka',
 
 
     })
     
-    function resetFormData() {
-        dataWydarzenia.Alias = '';
-        dataWydarzenia.Opis = '';
-        dataWydarzenia.DataStart = today;
-        dataWydarzenia.DataStop = today;
-        dataWydarzenia.Organizator = 'Akademia Łomżyńska';
-        dataWydarzenia.Lokalizacja = 'Akademicka';
-        if (quill) quill.innerHTML = '';
-    }
-    
-    watch(() => route.fullPath, () => {
-        resetFormData();
-    })
 
     async function fillForm(data) {
         dataWydarzenia.Alias = data.Nazwa || '';
@@ -61,28 +39,11 @@
         }
     }
     
-    let quill = null
-    onMounted(() => {
-        
-    })
     onMounted(async () => {
-        if (route.path == '/kalendarium/dodaj') { 
-            resetFormData();
-        }
         if (wydarzenieID){
             await GetDataWydarzenia()
-        }
-        quill = initQuill('#quill', dataWydarzenia.Opis);
-        quill.on('text-change', () => {
-            dataWydarzenia.Opis = quill.root.innerHTML;
-        });
-        
+        }  
     })
-
-    
-
-    
-    
 </script>
 
 
@@ -94,9 +55,7 @@
     <link rel="stylesheet" href="/src/assets/css/przyciski.css"/>
     <link rel="stylesheet" href="/src/assets/css/wydarzenieContent.css"/>
     <link rel="stylesheet" href="/src/assets/css/footer.css"/>
-    <!--  -->
    
-
     <content>
         <buttons>
             <button id="b_zapisz">Zapisz</button>
@@ -112,7 +71,7 @@
             <p>Lokalizacja: <input v-model="dataWydarzenia.Lokalizacja" class="infoSpan" contenteditable="true" spellcheck="false" @input="autoWidth"></input></p>
             <p>Organizator: <input v-model="dataWydarzenia.Organizator" class="infoSpan" contenteditable="true" spellcheck="false" @input="autoWidth"></input></p>
             <p>Opis wydarzenia: </p>
-            <div id="quill"></div>
+            <div v-html="dataWydarzenia.Opis"></div>
 
         </info>
     </content>
