@@ -14,11 +14,16 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"gorm.io/gorm"
+
+	"time"
 )
+
+var now = time.Now()
+var today = time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, now.Location())
 
 func GetWydarzenieList(c *gin.Context) {
 	var wydarzenia []models.Wydarzenia
-	if err := config.DB.Find(&wydarzenia).Error; err != nil {
+	if err := config.DB.Order("data_start DESC").Where("data_stop >= ?", today).Find(&wydarzenia).Error; err != nil {
 		log.Fatal(err)
 	}
 	c.JSON(http.StatusOK, wydarzenia)

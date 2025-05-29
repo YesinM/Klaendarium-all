@@ -1,0 +1,26 @@
+services:
+  backend:
+    build: ./backend
+    network_mode: "bridge"
+    depends_on:
+      - db
+  frontend:
+    build: ./frontend
+    network_mode: "bridge"
+  db:
+    image: mysql:latest
+    network_mode: "bridge"
+    environment:
+      MYSQL_DATABASE: mariadb
+      MYSQL_PASSWORD: 
+      MYSQL_ROOT_PASSWORD: 
+      MYSQL_USER: user
+    ports: 
+      - "3305:3306"
+    volumes:
+      - db-data:/var/lib/mysql
+    
+volumes:
+  db-data:
+
+

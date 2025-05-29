@@ -1,0 +1,12 @@
+
+
+services:
+  backend:
+    #build: .
+    image: backend:02
+    ports:
+      - "1409:5172"
+    volumes:
+      - .:/app
+    working_dir: /app #uruchamiać polecenia z
+    command: go run main.go
