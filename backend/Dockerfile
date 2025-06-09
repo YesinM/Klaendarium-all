@@ -1,6 +1,6 @@
 #komentarze są tylko moim konspektem, dlatego można usunąć :)
 #from język:vers-"system" obrazu
-FROM golang
+FROM golang:latest
 
 #folder *wirtualny*
 WORKDIR /app
@@ -10,6 +10,7 @@ COPY . .
 RUN go mod download
 #/backend -copy to> /app
 #
+EXPOSE 5172
 
 #RUN działa tylko podczas ładowania kontenera, dlatego RUN go run main.go stworzy "martwy" kontener
 CMD ["go", "run", "main.go"]

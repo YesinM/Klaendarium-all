@@ -1,20 +1,21 @@
 services:
   backend:
     build: ./backend
-    network_mode: "bridge"
     depends_on:
       - db
+    ports:
+      - "1409:5172"
   frontend:
     build: ./frontend
-    network_mode: "bridge"
+    ports:
+      - "1408:5173"
   db:
     image: mysql:latest
-    network_mode: "bridge"
     environment:
       MYSQL_DATABASE: mariadb
-      MYSQL_PASSWORD: 
-      MYSQL_ROOT_PASSWORD: 
-      MYSQL_USER: user
+      MYSQL_PASSWORD: k@l3nd@riumdev
+      MYSQL_ROOT_PASSWORD: k@l3nd@riumdev
+      MYSQL_USER: root
     ports: 
       - "3305:3306"
     volumes:
