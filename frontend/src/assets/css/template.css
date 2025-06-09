@@ -273,8 +273,7 @@ input {
     cursor: text;
     margin: 0em;
     border-width: 2px;
-    border-style: inset;
-    border-color: -internal-light-dark(rgb(118, 118, 118), rgb(133, 133, 133));
+
     border-image: initial;
     vertical-align: middle;
 }
