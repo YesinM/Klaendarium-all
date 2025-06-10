@@ -3,7 +3,6 @@ package main
 import (
 	"backend/config"
 	"backend/routes"
-	"fmt"
 
 	"github.com/gin-gonic/gin"
 )
@@ -13,5 +12,4 @@ func main() {
 	r := gin.Default()
 	routes.RegisterRoutes(r)
 	r.Run("0.0.0.0:5172")
-	fmt.Println("Ala ma kota")
 }
