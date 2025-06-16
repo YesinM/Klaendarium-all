@@ -1,15 +1,11 @@
 <script setup>
 
 import { reactive, onMounted, ref, watch, defineComponent} from 'vue'
-
 import dayjs from 'dayjs'
 import 'dayjs/locale/pl'
-
+import { computed } from 'vue';
 
 dayjs.locale('pl')
-
-
-
 
 function getOptions(first = 2015, last = getCurrentYear()) {
     const options = [];
@@ -29,13 +25,27 @@ function getCurrentYear() {
   return new Date().getFullYear()
 }
 
+function filteringByYear(date) {
+    if (chosedYears.value.length === 0) {
+        console.log(chosedYears.length)
+        return true;
+    }
+    return chosedYears.value.includes(+date.year)
+}
+
+
+const chosedYears = ref([])
 
 const dateList = ref([])
-const chosedYears = ref([])
 onMounted(async () => {
     const response = await fetch('/api/all');
     const data = await response.json();
-    dateList.value = data;  
+    dateList.value = data; 
+
+    for (let wydarzenie of dateList.value) {
+        wydarzenie.year = dayjs(wydarzenie.DataStart).format('YYYY')
+    }
+     
 }) 
 
 
@@ -47,7 +57,8 @@ onMounted(async () => {
     
     <main class="content">
         <v-select 
-            class="h-25 w-33"
+            class = "h-33"
+            style = "width: 130px; border-radius: 25px;"
             :items = getOptions()
             v-model = chosedYears
             label="Rok"
@@ -57,23 +68,26 @@ onMounted(async () => {
             density="compact"
             variant="outlined"
         ></v-select>
-        <ul>    
-            <li v-for="date in dateList" :key='date.id' class="events-title">
-                <span class="module-event-date">
-                    {{localDate(date.DataStart)}}
-                    &nbsp;
-                </span> 
-                <RouterLink :to="{path:'/kalendarium/wydarzenie', query: {id: date.ID}}"> {{date.Nazwa}}</RouterLink>
-                    
+            <div v-for="date in dateList" :key='date.id'  >
                 
-            </li>
-        </ul>
+                <div class="events-title" v-if="filteringByYear(date)"> <!--filtrowanie za rokiem --> 
+                    <span class="module-event-date">
+                        {{localDate(date.DataStart)}}
+                        &nbsp;
+                    </span> 
+                    <RouterLink :to="{path:'/kalendarium/wydarzenie', query: {id: date.ID}}"> {{date.Nazwa}}</RouterLink>
+                </div>         
+            
+            </div>
     </main>
     <div class="testKalendarz"></div>
     
 </template>
 
 <style>
+    li {
+        text-decoration: none;
+    }
     .testKalendarz {
         display: inline;
         position: sticky;
