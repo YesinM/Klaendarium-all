@@ -31,6 +31,7 @@ function getCurrentYear() {
 
 
 const dateList = ref([])
+const chosedYears = ref([])
 onMounted(async () => {
     const response = await fetch('/api/all');
     const data = await response.json();
@@ -45,10 +46,10 @@ onMounted(async () => {
     
     
     <main class="content">
-        <input>
         <v-select 
             class="h-25 w-33"
             :items = getOptions()
+            v-model = chosedYears
             label="Rok"
             chips
             multiple
