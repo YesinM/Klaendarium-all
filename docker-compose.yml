@@ -7,6 +7,9 @@ services:
       - "1409:5172"
     volumes:
       - ./backend:/app
+    environment:
+    - AIR_ENV=dev
+    command: air
   frontend:
     build: ./frontend
     ports:

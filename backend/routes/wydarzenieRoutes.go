@@ -8,5 +8,5 @@ import (
 
 func RegisterRoutes(router *gin.Engine) {
 	router.GET("/api/all", services.GetWydarzenieList)
-	router.GET("/api/wydarzenie", services.GetWydarzenie)
+	router.GET("/api/:wydarzenie", services.GetWydarzenie)
 }

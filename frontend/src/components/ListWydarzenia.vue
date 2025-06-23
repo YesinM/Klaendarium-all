@@ -15,10 +15,11 @@ function getOptions(first = 2015, last = getCurrentYear()) {
 }
 
 function localDate(rawDate){
-    const day = dayjs(rawDate).format('DD');
+    const day = dayjs(rawDate).format('D');
     const month = dayjs(rawDate).format('MMM');
+    const year = dayjs(rawDate).format('YYYY')
 
-    return day + ' '+ month.charAt(0).toUpperCase() + month.slice(1) // maj ==> Maj
+    return day + ' '+ month.charAt(0).toUpperCase() + month.slice(1) + ' ' + year // maj ==> Maj
 }
 
 function getCurrentYear() {
@@ -46,19 +47,14 @@ onMounted(async () => {
         wydarzenie.year = dayjs(wydarzenie.DataStart).format('YYYY')
     }
      
-}) 
-
-
-    
+})     
 </script>
 
 <template>
-    
-    
     <main class="content">
         <v-select 
             class = "h-33"
-            style = "width: 130px; border-radius: 25px;"
+            style = "width: 150px; border-radius: 25px;"
             :items = getOptions()
             v-model = chosedYears
             label="Rok"
@@ -68,23 +64,44 @@ onMounted(async () => {
             density="compact"
             variant="outlined"
         ></v-select>
-            <div v-for="date in dateList" :key='date.id'  >
+        <div class="eventList">
+            <div v-for="date in dateList" :key='date.id'>
                 
-                <div class="events-title" v-if="filteringByYear(date)"> <!--filtrowanie za rokiem --> 
+                <v-card v-if="filteringByYear(date)" 
+                    class="eventCard"
+                    :title= 'dayjs(date.DataStart).format("HH:mm")'
+                    :subtitle="localDate(date.DataStart)"
+                    :text="date.Nazwa"
+                    variant="flat">
+                    <v-card-actions>
+                        <router-link :to="`/kalendarium/${date.Alias}`">
+                        <v-btn>
+                            <v-icon icon="$next" start/>
+                            Zobacz więcej
+                        </v-btn>
+                        </router-link>
+                    </v-card-actions>
+                </v-card>
+                <!-- <div class="events-title" v-if="filteringByYear(date)"> filtrowanie za rokiem 
                     <span class="module-event-date">
                         {{localDate(date.DataStart)}}
                         &nbsp;
                     </span> 
-                    <RouterLink :to="{path:'/kalendarium/wydarzenie', query: {id: date.ID}}"> {{date.Nazwa}}</RouterLink>
-                </div>         
+                    
+                </div>          -->
             
             </div>
+        </div>
     </main>
-    <div class="testKalendarz"></div>
     
 </template>
 
 <style>
+
+    .eventList {
+        display: flex;
+        flex-flow: row wrap;
+    }
     li {
         text-decoration: none;
     }
@@ -96,6 +113,10 @@ onMounted(async () => {
         border: 10px;
         background-color: aqua;
     }
+    .module-event-date {
+        margin-bottom: 10px;
+    }
+    
 </style>
 
 

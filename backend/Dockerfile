@@ -7,10 +7,11 @@ WORKDIR /app
 #kopiowanie plików do utworzonego folderu
 COPY . . 
 #RUN polecenie
-RUN go mod download
+RUN go mod download 
+RUN go install github.com/air-verse/air@latest
 #/backend -copy to> /app
 #
 EXPOSE 5172
 
 #RUN działa tylko podczas ładowania kontenera, dlatego RUN go run main.go stworzy "martwy" kontener
-CMD ["go", "run", "main.go"]
+CMD ["air"]

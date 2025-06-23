@@ -1,6 +1,7 @@
 package services
 
 import (
+	"fmt"
 	"log"
 
 	"strconv"
@@ -31,9 +32,9 @@ func GetWydarzenieList(c *gin.Context) {
 
 func GetWydarzenie(c *gin.Context) {
 	var wydarzenie models.Wydarzenia
-	idStr := c.Query("id")
-	id, err := strconv.Atoi(idStr)
-	if err = config.DB.First(&wydarzenie, id).Error; err != nil {
+	aliasStr := c.Param("wydarzenie")
+	fmt.Println("alias:", aliasStr)
+	if err := config.DB.Where("alias = ?", aliasStr).First(&wydarzenie).Error; err != nil {
 		log.Fatal(err)
 	}
 	c.JSON(http.StatusOK, wydarzenie)
@@ -51,4 +52,8 @@ func DeleteWydarzenie(c *gin.Context) {
 func InsertWydarzenie(db *gorm.DB) {
 	wydarzenie := models.Wydarzenia{}
 	db.Create(&wydarzenie)
+}
+
+func UpdateWydarzenie(c *gin.Context) {
+
 }

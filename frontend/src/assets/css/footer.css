@@ -8,8 +8,7 @@ footer {
         
     }
     .footer > div{
-        flex: 1 1 50%;
-        margin: 0 40px;
+  
         
     }
     .footer-bottom{
@@ -17,7 +16,7 @@ footer {
         justify-content: space-between;
         background-color: white;
         
-        padding: 10px 20px;
+
         width: 100%;
         flex: 0 0 100%;
         font-size: 0.8em;
@@ -32,13 +31,13 @@ footer {
 
     .social-media img {
         aspect-ratio: 1/1;
-        width: 50px;
+        width: 35px;
         margin: 0 5px 5px 0;
         background-color: white;
     }
 
     .social-media{
-        margin: 20px;
+        margin-bottom: 20px;
     }
 
     .contacts {

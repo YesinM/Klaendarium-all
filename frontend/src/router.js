@@ -4,7 +4,7 @@ import Wydarzenie from './components/Wydarzenie.vue';
 import WydarzenieView from './components/WydarzenieView.vue';
 
 const routes = [
-    {path: '/kalendarium/wydarzenie', component: Wydarzenie},
+    {path: '/kalendarium/:alias', component: Wydarzenie},
     {path: '/kalendarium', component: ListWydarzenia},
     {path: '/kalendarium/dodaj', component: Wydarzenie}
 ]

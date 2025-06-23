@@ -846,7 +846,6 @@ dt {
     position: relative;
     clear: both;
     background: #f9f9f9;
-    margin-bottom: 40px
 }
 
 #user a {
@@ -3172,11 +3171,11 @@ margin-right: 3%;
         margin-right: 0
     }
 
-    #baner {
+    /* #baner {
         position: relative;
         margin-bottom: 0;
 		display: none;
-    }
+    } */
 
     #header-bar {
         display: none
