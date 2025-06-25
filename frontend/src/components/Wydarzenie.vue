@@ -73,7 +73,7 @@
     }
 
     function visibilytyEvent() {
-
+        
     }
 
     function deleteEvent() {
@@ -165,8 +165,7 @@
 </template>
 
 <style>
-    #alias {
-    }
+
     .vbuttons {
         margin-right: 10px;
         margin-top: 30px;

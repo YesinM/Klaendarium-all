@@ -33,21 +33,33 @@ function filteringByYear(date) {
     }
     return chosedYears.value.includes(+date.year)
 }
-
+const dateList = ref([])
 
 const chosedYears = ref([])
+async function fetchItems(){
+    console.log('Żyję!')
+    const params = new URLSearchParams();
+    chosedYears.value.forEach(year => {
+        params.append("year", year)
+    });
 
-const dateList = ref([])
-onMounted(async () => {
-    const response = await fetch('/api/all');
+    const response = await fetch(`/api/all?${params.toString()}`);
     const data = await response.json();
-    dateList.value = data; 
+    dateList.value = data;
+    console.log(data);
 
-    for (let wydarzenie of dateList.value) {
-        wydarzenie.year = dayjs(wydarzenie.DataStart).format('YYYY')
-    }
-     
-})     
+}
+
+watch(chosedYears, () => {
+    fetchItems();
+})
+
+onMounted(()=>{
+    fetchItems();
+})
+
+
+   
 </script>
 
 <template>
@@ -67,7 +79,7 @@ onMounted(async () => {
         <div class="eventList">
             <div v-for="date in dateList" :key='date.id'>
                 
-                <v-card v-if="filteringByYear(date)" 
+                <v-card 
                     class="eventCard"
                     :title= 'dayjs(date.DataStart).format("HH:mm")'
                     :subtitle="localDate(date.DataStart)"
@@ -93,7 +105,7 @@ onMounted(async () => {
             </div>
         </div>
     </main>
-    
+    <v-pagination></v-pagination>
 </template>
 
 <style>
