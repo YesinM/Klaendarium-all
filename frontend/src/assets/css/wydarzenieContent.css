@@ -48,7 +48,6 @@ buttons {
         position: relative;
         overflow: hidden;
         width: 300px;
-        margin: 6px;
         border: 1px solid rgb(0, 0, 0, 0.1);
     }
 
@@ -68,6 +67,10 @@ buttons {
     background-color: darkred;
 }
 @media (max-width: 680px){
+    .eventList > div{
+        flex-grow: 1;
+        flex-direction: column;
+    }
     .eventCard{
         width: 100%;
     }
