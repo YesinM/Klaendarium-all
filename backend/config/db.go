@@ -17,5 +17,4 @@ func Connect() {
 		log.Fatalf("Failed to connect database: %v", err)
 	}
 	DB = db
-	//defer sqlDB.Close() // defer function wykona się po zakończeniu main()
 }

@@ -14,8 +14,6 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"gorm.io/gorm"
-
 	"time"
 )
 
@@ -60,15 +58,30 @@ func GetWydarzenie(c *gin.Context) {
 func DeleteWydarzenie(c *gin.Context) {
 	idStr := c.Query("id")
 	id, err := strconv.Atoi(idStr)
-	if err = config.DB.Delete(&models.Wydarzenia{}, id).Error; err != nil {
+	if err != nil {
+		c.JSON(400, gin.H{"Error": err.Error()})
+		return
+	}
+	if err := config.DB.Delete(&models.Wydarzenia{}, id).Error; err != nil {
 		log.Fatal(err)
 	}
 	c.JSON(http.StatusOK, gin.H{"status": "deleted"})
 }
 
-func InsertWydarzenie(db *gorm.DB) {
+func SaveWydarzenie(c *gin.Context) {
 	wydarzenie := models.Wydarzenia{}
-	db.Create(&wydarzenie)
+	config.Connect()
+
+	if err := c.ShouldBindJSON(&wydarzenie); err != nil {
+		c.JSON(400, gin.H{"Error:": err.Error()})
+	}
+
+	if err := config.DB.Create(&wydarzenie).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Nie udało się zapisać"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Zapisane"})
 }
 
 func UpdateWydarzenie(c *gin.Context) {
