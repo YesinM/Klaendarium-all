@@ -3,6 +3,7 @@ package services
 import (
 	"fmt"
 	"log"
+	"strings"
 
 	"strconv"
 
@@ -13,6 +14,7 @@ import (
 	"backend/config"
 
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 
 	"time"
 )
@@ -21,11 +23,12 @@ var now = time.Now()
 var today = time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, now.Location())
 
 func GetWydarzenieList(c *gin.Context) {
-	var wydarzenia []models.Wydarzenia
+	var wydarzenia []models.WydarzenieSummary
 	years := c.QueryArray("year")
 	intYears := make([]int, 0, len(years))
 
 	query := config.DB.Model(&models.Wydarzenia{})
+	query = query.Select("ID", "Nazwa", "Alias", "DataStart", "Aktywne")
 	for _, y := range years {
 		if val, err := strconv.Atoi(y); err == nil {
 			intYears = append(intYears, val)
@@ -42,6 +45,7 @@ func GetWydarzenieList(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
+	fmt.Println(wydarzenia)
 	c.JSON(http.StatusOK, wydarzenia)
 }
 
@@ -56,25 +60,45 @@ func GetWydarzenie(c *gin.Context) {
 }
 
 func DeleteWydarzenie(c *gin.Context) {
-	idStr := c.Query("id")
-	id, err := strconv.Atoi(idStr)
-	if err != nil {
-		c.JSON(400, gin.H{"Error": err.Error()})
+	aliasStr := c.Param("wydarzenie")
+	if err := config.DB.Where("alias = ?", aliasStr).Delete(&models.Wydarzenia{}).Error; err != nil {
+		c.JSON(400, gin.H{"Error:": err.Error()})
 		return
-	}
-	if err := config.DB.Delete(&models.Wydarzenia{}, id).Error; err != nil {
-		log.Fatal(err)
 	}
 	c.JSON(http.StatusOK, gin.H{"status": "deleted"})
 }
 
 func SaveWydarzenie(c *gin.Context) {
 	wydarzenie := models.Wydarzenia{}
+	prefix := ""
+
 	config.Connect()
 
 	if err := c.ShouldBindJSON(&wydarzenie); err != nil {
 		c.JSON(400, gin.H{"Error:": err.Error()})
+		return
 	}
+
+	wydarzenie.Alias = strings.ReplaceAll(wydarzenie.Nazwa, " ", "-")
+	wydarzenie.Alias = strings.ToLower(wydarzenie.Alias)
+	//var count int64
+	// config.DB.Where("alias LIKE ?", wydarzenie.Alias+"%").Count(&count)
+	// if count != 0 {
+	// 	wydarzenie.Alias = wydarzenie.Alias + strconv.FormatInt(count + 1)
+	// }
+	//dodanie do aliasu prefiksa, jeśli nie jest unikalny
+	start := time.Now()
+	for i := 0; ; i++ {
+		tempEvent := models.Wydarzenia{}
+		if err := config.DB.Where("alias = ?", wydarzenie.Alias+prefix).First(&tempEvent).Error; err == gorm.ErrRecordNotFound {
+			wydarzenie.Alias = wydarzenie.Alias + prefix
+			break
+		} else {
+			prefix = "-" + strconv.Itoa(i+1)
+		}
+	}
+	end := time.Since(start)
+	fmt.Println("time: ", end)
 
 	if err := config.DB.Create(&wydarzenie).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Nie udało się zapisać"})

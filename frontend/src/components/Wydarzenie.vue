@@ -2,9 +2,12 @@
     import {ref, onMounted, reactive, watch} from 'vue';
     import dayjs from 'dayjs'
     import 'dayjs/locale/pl'
-    import { createRouter, useRoute } from 'vue-router';
+    import { useRouter, useRoute } from 'vue-router';
     import { initQuill } from '@/quill/quill';
 
+
+    dayjs.locale('pl');
+    const router = useRouter();
     const route = useRoute();
     let alias = route.params.alias;
     watch(() => route.fullPath, () => {
@@ -18,8 +21,7 @@
     let day = ref(today.toLocaleString('pl-PL', {day: 'numeric'}));
     
     const dataWydarzenia = reactive({
-            //id:
-            //nazwa: title,
+            Nazwa: '',
             Alias: '',
             Opis: '',
             DataStart: today,
@@ -39,6 +41,8 @@
         dataWydarzenia.Lokalizacja = 'Akademicka';
         if (quill) quill.innerHTML = '';
     }
+    const timeStart = ref(new Date)
+    const timeStop = ref(new Date)
     
     watch(() => route.fullPath, () => {
         resetFormData();
@@ -66,18 +70,25 @@
     function makeVisibleDatepicker(){
 
     }
+
     let quill = null;
 
     function saveEvent() {
-
+        
     }
 
     function visibilytyEvent() {
         
     }
 
-    function deleteEvent() {
-
+    async function deleteEvent() {
+        await fetch(`/api/${alias}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-type': 'application/json',
+            },
+        });
+        await router.replace('/kalendarium');
     }
 
     onMounted(async () => {
@@ -86,17 +97,19 @@
         }
         if (alias){
             await GetDataWydarzenia()
-            today = new Date(dataWydarzenia.DataStart)
-            month.value = today.toLocaleString('pl-PL', {month: 'short'});
-            month.value = month.value.slice(0,1).toUpperCase() + month.value.slice(1); // month --> Month
-            year.value = today.toLocaleString('pl-PL', {year: 'numeric'}); 
-            day.value = today.toLocaleString('pl-PL', {day: 'numeric'});
+            today = dayjs(dataWydarzenia.DataStart)
+            month.value = today.format('MMMM')
+            month.value = month.value.slice(0,1).charAt(0).toUpperCase() + month.value.slice(1,3) // month --> Month
+            year.value = today.format('YYYY')
+            day.value = today.format('D')
+            
             console.log(month.value)
             console.log(today)
         }
         quill = initQuill('#quill', dataWydarzenia.Opis);
         quill.on('text-change', () => {
             dataWydarzenia.Opis = quill.root.innerHTML;
+            console.log(dataWydarzenia.Opis)
         });
         
     })
@@ -115,7 +128,7 @@
    
 
     <main class="content">
-        <buttons class="ms-20">
+        <div class="buttons ms-20">
             <v-btn class="vbuttons" 
             
             density="comfortable"
@@ -147,19 +160,22 @@
             >
             <v-icon icon="$cancel" start=""/>
             Usuń</v-btn>
-        </buttons>
+        </div>
         <div id="alias">
             <span class="module-event-date">{{day}} {{month}} {{year}}</span>
             <input v-model="dataWydarzenia.Alias" id="inputAlias" placeholder="Tytuł" />
         </div>
-        <info>
-            <p>Godzina: <v-btn variant="flat" @click="makeVisibleDatepicker"></v-btn></p>
+        <div class=info>
+            <p>Godzina: <v-btn variant="flat" @click="makeVisibleDatepicker">{{ dataWydarzenia.DataStart}}</v-btn></p>
+            <v-time-picker>
+
+            </v-time-picker>
             <p>Lokalizacja: <input v-model="dataWydarzenia.Lokalizacja" class="infoSpan" contenteditable="true" spellcheck="false" @input="autoWidth"></input></p>
             <p>Organizator: <input v-model="dataWydarzenia.Organizator" class="infoSpan" contenteditable="true" spellcheck="false" @input="autoWidth"></input></p>
             <p>Opis wydarzenia: </p>
             <div id="quill"></div>
 
-        </info>
+        </div>
     </main>
     
 </template>

@@ -6,6 +6,7 @@ import 'dayjs/locale/pl'
 import { computed } from 'vue';
 import { useDisplay } from 'vuetify/lib/composables/display';
 
+
 const display = useDisplay();
 
 dayjs.locale('pl')
@@ -51,6 +52,10 @@ async function fetchItems(){
     numberOfPages.value = await Math.ceil((dateList.value.length) / 12)
 }
 
+function isActive(active){
+    return 
+}
+
 const paginatedList = computed (()=>{
     const s = (currentPage.value - 1) * 12;
     const e = s + 12;
@@ -87,11 +92,9 @@ onMounted(()=>{
         ></v-select>
         <div class="eventList">
             <div v-for="date in paginatedList" :key='date.id'>
-                
-                <v-card 
-                    class="eventCard"
-                    
-                    variant="flat">
+                <router-link :to="`/kalendarium/${date.Alias}`">
+                <v-card :variant = "date.Aktywne ? 'flat' : 'plain'"
+                    class="eventCard">
                     <v-card-title></v-card-title>
                     <v-card-subtitle
                     style="padding-top: 5px;"
@@ -112,6 +115,7 @@ onMounted(()=>{
                         </router-link>
                     </v-card-actions>
                 </v-card>
+                </router-link>  
                 <!-- <div class="events-title" v-if="filteringByYear(date)"> filtrowanie za rokiem 
                     <span class="module-event-date">
                         {{localDate(date.DataStart)}}
@@ -145,7 +149,8 @@ onMounted(()=>{
         white-space: normal;
         line-height: 2rem;
         max-height: 3.9rem;  
-}
+
+    }
 
 
     .v-card{
