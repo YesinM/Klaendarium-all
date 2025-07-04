@@ -22,6 +22,27 @@ import (
 var now = time.Now()
 var today = time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, now.Location())
 
+func GenerateAlias(wydarzenie *models.Wydarzenia) {
+	prefix := ""
+	wydarzenie.Alias = strings.ReplaceAll(wydarzenie.Nazwa, " ", "-")
+	wydarzenie.Alias = strings.ToLower(wydarzenie.Alias)
+	//var count int64
+	// config.DB.Where("alias LIKE ?", wydarzenie.Alias+"%").Count(&count)
+	// if count != 0 {
+	// 	wydarzenie.Alias = wydarzenie.Alias + strconv.FormatInt(count + 1)
+	// }
+	//dodanie do aliasu prefiksa, jeśli nie jest unikalny
+	for i := 0; ; i++ {
+		tempEvent := models.Wydarzenia{}
+		if err := config.DB.Where("alias = ?", wydarzenie.Alias+prefix).First(&tempEvent).Error; err == gorm.ErrRecordNotFound {
+			wydarzenie.Alias = wydarzenie.Alias + prefix
+			break
+		} else {
+			prefix = "-" + strconv.Itoa(i+1)
+		}
+	}
+}
+
 func GetWydarzenieList(c *gin.Context) {
 	var wydarzenia []models.WydarzenieSummary
 	years := c.QueryArray("year")
@@ -70,7 +91,6 @@ func DeleteWydarzenie(c *gin.Context) {
 
 func SaveWydarzenie(c *gin.Context) {
 	wydarzenie := models.Wydarzenia{}
-	prefix := ""
 
 	config.Connect()
 
@@ -79,26 +99,7 @@ func SaveWydarzenie(c *gin.Context) {
 		return
 	}
 
-	wydarzenie.Alias = strings.ReplaceAll(wydarzenie.Nazwa, " ", "-")
-	wydarzenie.Alias = strings.ToLower(wydarzenie.Alias)
-	//var count int64
-	// config.DB.Where("alias LIKE ?", wydarzenie.Alias+"%").Count(&count)
-	// if count != 0 {
-	// 	wydarzenie.Alias = wydarzenie.Alias + strconv.FormatInt(count + 1)
-	// }
-	//dodanie do aliasu prefiksa, jeśli nie jest unikalny
-	start := time.Now()
-	for i := 0; ; i++ {
-		tempEvent := models.Wydarzenia{}
-		if err := config.DB.Where("alias = ?", wydarzenie.Alias+prefix).First(&tempEvent).Error; err == gorm.ErrRecordNotFound {
-			wydarzenie.Alias = wydarzenie.Alias + prefix
-			break
-		} else {
-			prefix = "-" + strconv.Itoa(i+1)
-		}
-	}
-	end := time.Since(start)
-	fmt.Println("time: ", end)
+	GenerateAlias(&wydarzenie)
 
 	if err := config.DB.Create(&wydarzenie).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Nie udało się zapisać"})
@@ -109,5 +110,33 @@ func SaveWydarzenie(c *gin.Context) {
 }
 
 func UpdateWydarzenie(c *gin.Context) {
+	id := c.Param("id")
+	wydarzenie := models.Wydarzenia{}
+	config.Connect()
 
+	if err := c.ShouldBindJSON(&wydarzenie); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error()})
+		return
+	}
+	GenerateAlias(&wydarzenie)
+
+	previousWydarzenie := models.Wydarzenia{}
+	if err := config.DB.Where("ID = ?", id).First(&previousWydarzenie).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	previousWydarzenie.Nazwa = wydarzenie.Nazwa
+	previousWydarzenie.Alias = wydarzenie.Alias
+	previousWydarzenie.Opis = wydarzenie.Opis
+	previousWydarzenie.DataStart = wydarzenie.DataStart
+	previousWydarzenie.DataStop = wydarzenie.DataStop
+	previousWydarzenie.Organizator = wydarzenie.Organizator
+	previousWydarzenie.Lokalizacja = wydarzenie.Lokalizacja
+
+	if err := config.DB.Save(&previousWydarzenie).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"err": "Błąd podczas aktualizacji"})
+	}
+	c.JSON(http.StatusOK, gin.H{"message": "Updated"})
 }
