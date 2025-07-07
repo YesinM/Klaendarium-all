@@ -31,13 +31,29 @@
     
 }
 
-
+#opis-wydarzenia{
+    padding: 15px 0px;
+}
 
 
 .infoSpan {
     font-weight: bold;
     border: none;
     width: 500px;
+    padding-bottom: 10px;
+}
+
+#b_zapisz, #b_widoczny, #b_usun {
+    background-color: #BE1E2D;
+    color: white;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-size: 13px;
+    font-weight: bold;
+    line-height: 1.25;
+    border: none;
+    margin-left: 10px;
+    padding: 8px 10px 8px 10px;
+    border-radius: 5px;
 }
 
 #quill{
@@ -66,6 +82,9 @@
     height: 6px;
     background-color: darkred;
 }
+.ql-container{
+        font-size: 1rem;
+    }
 @media (max-width: 680px){
     .eventList > div{
         flex-grow: 1;

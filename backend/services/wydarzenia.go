@@ -140,3 +140,7 @@ func UpdateWydarzenie(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, gin.H{"message": "Updated"})
 }
+
+func VisibilitySwitcher(c *gin.Context) {
+
+}

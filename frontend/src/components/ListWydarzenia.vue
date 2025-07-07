@@ -177,6 +177,24 @@ onMounted(()=>{
         background-color: aqua;
     }
     .module-event-date {
+        font-family: "Courier New", Courier, monospace;
+        display: inline-block;
+        font-size: 20px;
+        font-weight: bolder;
+        max-height: 75px;
+        left: 0;
+        overflow: hidden;
+        padding: 5px;
+        text-align: center;
+        top: 0;
+        width: 55px;
+        background-color: #fff;
+        padding-top: 10px;
+        border-top: 5px solid #BE1E2D;
+        background: #F5F5F5;
+        line-height: 1;
+        border-radius: 10px;
+        min-width: 55px;
         margin-bottom: 10px;
     }
     @media (max-width:680px) {

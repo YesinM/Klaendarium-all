@@ -11,9 +11,9 @@ window.addEventListener('load', () => {
 
 <template v-if="isLoaded" class="page-wrapper">
     <v-app>
-    <link rel="stylesheet" href="/src/assets/css/bootstrap.min.css"/>
-    <link rel="stylesheet" href="/src/assets/css/template.css"/>
-    <link rel="stylesheet" href="/src/assets/css/kalendarium.css"/>
+    
+    
+    
     <link rel="stylesheet" href="/src/assets/css/footer.css"/>
     <link rel="stylesheet" href="/src/assets/css/wydarzenieContent.css"/>
     <header>

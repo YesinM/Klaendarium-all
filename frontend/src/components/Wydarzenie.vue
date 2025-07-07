@@ -33,6 +33,7 @@
     })
     
     function resetFormData() {
+        dataWydarzenia.ID = '';
         dataWydarzenia.Alias = '';
         dataWydarzenia.Opis = '';
         dataWydarzenia.DataStart = today;
@@ -49,6 +50,7 @@
     })
 
     async function fillForm(data) {
+        dataWydarzenia.ID = data.ID || '';
         dataWydarzenia.Alias = data.Nazwa || '';
         dataWydarzenia.Opis = data.Opis || '';
         dataWydarzenia.Organizator = data.Organizator || '';
@@ -63,7 +65,7 @@
             console.log(response);
             const data = await response.json();
             await fillForm(data);
-            console.log(data);
+            console.log(dataWydarzenia);
         }
     }
     
@@ -172,7 +174,7 @@
             </v-time-picker>
             <p>Lokalizacja: <input v-model="dataWydarzenia.Lokalizacja" class="infoSpan" contenteditable="true" spellcheck="false" @input="autoWidth"></input></p>
             <p>Organizator: <input v-model="dataWydarzenia.Organizator" class="infoSpan" contenteditable="true" spellcheck="false" @input="autoWidth"></input></p>
-            <p>Opis wydarzenia: </p>
+            <p id="opis-wydarzenia">Opis wydarzenia: </p>
             <div id="quill"></div>
 
         </div>
