@@ -1,0 +1,37 @@
+services:
+  backend:
+    build: ./backend
+    depends_on:
+      - db
+    ports:
+      - "1409:5172"
+    volumes:
+      - ./backend:/app
+    environment:
+    - AIR_ENV=dev
+    command: air
+  frontend:
+    build: ./frontend
+    ports:
+      - "1408:5173"
+    volumes:
+     - ./frontend:/app
+    command: sh -c "npm install && npm run dev -- --host" 
+
+    environment:
+      - CHOKIDAR-USEPOLLING=true
+  db:
+    image: mysql:latest
+    environment:
+      MYSQL_DATABASE: mariadb
+      MYSQL_PASSWORD: k@l3nd@riumdev
+      MYSQL_ROOT_PASSWORD: k@l3nd@riumdev
+    ports: 
+      - "3305:3306"
+    volumes:
+      - db-data:/var/lib/mysql
+    
+volumes:
+  db-data:
+
+

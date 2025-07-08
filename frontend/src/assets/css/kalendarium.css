@@ -151,13 +151,7 @@ li.events-title{
     font-size: 1rem !important;
 }
 
-.content{
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 40px;
-    display: flow-root;
-    clear: both;
-}
+
 
 .module-event, .module-calendar {
     margin-right: 50px;

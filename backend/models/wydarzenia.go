@@ -19,3 +19,11 @@ type Wydarzenia struct {
 	ArtykulPowiazany string `gorm:"column:artykul_powiazany"`
 	Usuniety         int    `gorm:"column:usuniety"`
 }
+
+type WydarzenieSummary struct {
+	ID        uint       `gorm:"primaryKey;column:id"`
+	Nazwa     string     `gorm:"column:nazwa"`
+	Alias     string     `gorm:"column:alias"`
+	DataStart *time.Time `gorm:"column:data_start"`
+	Aktywne   bool       `gorm:"column:aktywne"`
+}
