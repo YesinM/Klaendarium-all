@@ -1,6 +1,7 @@
 package services
 
 import (
+	"errors"
 	"fmt"
 	"log"
 	"strings"
@@ -110,7 +111,7 @@ func SaveWydarzenie(c *gin.Context) {
 }
 
 func UpdateWydarzenie(c *gin.Context) {
-	id := c.Param("id")
+	alias := c.Param("alias")
 	wydarzenie := models.Wydarzenia{}
 	config.Connect()
 
@@ -119,13 +120,14 @@ func UpdateWydarzenie(c *gin.Context) {
 			"error": err.Error()})
 		return
 	}
-	GenerateAlias(&wydarzenie)
 
 	previousWydarzenie := models.Wydarzenia{}
-	if err := config.DB.Where("ID = ?", id).First(&previousWydarzenie).Error; err != nil {
+	if err := config.DB.Where("Alias = ?", alias).First(&previousWydarzenie).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+
+	GenerateAlias(&wydarzenie)
 
 	previousWydarzenie.Nazwa = wydarzenie.Nazwa
 	previousWydarzenie.Alias = wydarzenie.Alias
@@ -139,4 +141,25 @@ func UpdateWydarzenie(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"err": "Błąd podczas aktualizacji"})
 	}
 	c.JSON(http.StatusOK, gin.H{"message": "Updated"})
+}
+
+func VisibilitySwitcher(c *gin.Context) {
+	alias := c.Param("alias")
+	wydarzenie := models.Wydarzenia{}
+	config.Connect()
+	if err := config.DB.Where("Alias = ?", alias).First(&wydarzenie).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			c.JSON(http.StatusNotFound, gin.H{"error": "Nie znaleziono wydarzenia"})
+		}
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Błąd bazy danych"})
+	}
+	wydarzenie.Aktywne = !wydarzenie.Aktywne
+	if err := config.DB.Save(&wydarzenie).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Błąd serwera"})
+	}
+	if wydarzenie.Aktywne {
+		c.JSON(http.StatusOK, gin.H{"message": "Wydarzenie widoczne"})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": "Wydarzenie nie widoczne"})
 }

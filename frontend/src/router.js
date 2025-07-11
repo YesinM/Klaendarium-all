@@ -1,7 +1,6 @@
 import { createRouter, createWebHistory} from 'vue-router';
 import ListWydarzenia from './components/ListWydarzenia.vue';
 import Wydarzenie from './components/Wydarzenie.vue';
-import WydarzenieView from './components/WydarzenieView.vue';
 
 const routes = [
     {path: '/kalendarium/:alias', component: Wydarzenie},

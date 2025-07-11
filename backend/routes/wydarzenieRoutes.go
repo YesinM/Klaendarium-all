@@ -12,4 +12,5 @@ func RegisterRoutes(router *gin.Engine) {
 	router.POST("/api/zapisz", services.SaveWydarzenie)
 	router.DELETE("/api/:wydarzenie", services.DeleteWydarzenie)
 	router.PUT("/api/:id", services.UpdateWydarzenie)
+	router.PUT("/api/visibility-switcher/:alias", services.VisibilitySwitcher)
 }

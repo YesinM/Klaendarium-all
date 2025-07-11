@@ -67,9 +67,10 @@ watch(chosedYears, () => {
     fetchItems();
     
 })
-
+console.log(display.smAndDown.value)
 onMounted(()=>{
     fetchItems();
+    console.log(display.smAndDown.value)
 })
 
 
@@ -108,7 +109,9 @@ onMounted(()=>{
                     <v-card-actions>
 
                         <router-link :to="`/kalendarium/${date.Alias}`">
-                        <v-btn style="text-transform: none;">
+                        <v-btn class = "red-link" 
+                            variant="flat"
+                            style="text-transform: none;">
                             <v-icon icon="$next" start/>
                             Więcej
                         </v-btn>
@@ -127,16 +130,15 @@ onMounted(()=>{
             </div>
         </div>
     </main>
-    <div class="pagination">
-        <v-pagination 
+        <v-pagination class="pagination"
             v-if="numberOfPages > 1"
             v-model = currentPage
             :length = numberOfPages
-            :total-visible="display.smAndDown ? 3 : 5"  
+            :total-visible="display.smAndDown.value ? 3 : 5"  
             rounded="circle"
+            size="small"
         >
         </v-pagination>
-    </div>
 </template>
 
 <style>
@@ -152,7 +154,11 @@ onMounted(()=>{
 
     }
 
-
+ /* .v-pagination .v-btn--disabled {
+        margin: 0 2px !important; 
+        padding: 4px 8px !important; 
+        min-width: 32px !important; 
+    } */
     .v-card{
         flex: 1 1;
         height: 100%
@@ -178,6 +184,9 @@ onMounted(()=>{
     }
     .module-event-date {
         margin-bottom: 10px;
+    }
+    .pagination {
+        max-width: 1000px
     }
     @media (max-width:680px) {
     .eventList{

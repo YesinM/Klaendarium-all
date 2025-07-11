@@ -11,9 +11,6 @@ window.addEventListener('load', () => {
 
 <template v-if="isLoaded" class="page-wrapper">
     <v-app>
-    <link rel="stylesheet" href="/src/assets/css/bootstrap.min.css"/>
-    <link rel="stylesheet" href="/src/assets/css/template.css"/>
-    <link rel="stylesheet" href="/src/assets/css/kalendarium.css"/>
     <link rel="stylesheet" href="/src/assets/css/footer.css"/>
     <link rel="stylesheet" href="/src/assets/css/wydarzenieContent.css"/>
     <header>
@@ -21,19 +18,20 @@ window.addEventListener('load', () => {
             <img id="baner" style="height: 100%; width: 100%;" src="../src/assets/wydarzenia_baner.jpg">
         </div>
         <nav>
-            <v-toolbar class="w-100" color="white">
-                <v-btn href="https://al.edu.pl" target="_self" class="me-2"
-                variant="flat" 
-                color="#BE1E2D"
-                >
-                Start</v-btn>
-                <v-btn to="/kalendarium/dodaj"
-                 variant="flat"
-                 color="grey-lighten-5">
-                    Dodaj
-                    <v-icon icon="$plus"></v-icon>
-                </v-btn>
-                
+            <v-toolbar class="w-100 justify-center padding" color="white">
+                <div class="w-100 justify-center">
+                    <v-btn href="https://al.edu.pl" target="_self" class="me-2"
+                    variant="flat" 
+                    color="#BE1E2D"
+                    >
+                    Start</v-btn>
+                    <v-btn to="/kalendarium/dodaj"
+                    variant="flat"
+                    color="grey-lighten-5">
+                        Dodaj
+                        <v-icon icon="$plus"></v-icon>
+                    </v-btn>
+                </div>
             </v-toolbar>
         <!-- <div class="middle4">
             <ul class="breadcrumb">
@@ -86,7 +84,6 @@ a {
         text-decoration: none !important;   
     }
 nav {
-    float: left;
     padding: 10px 0px 20px 195px;
 
 }
@@ -127,8 +124,9 @@ html, body {
     padding: 0 10px 0 10px;
 }
 @media (max-width: 680px){
-        nav{
+        nav {
             padding: 10px 0px 20px 20px;
+            text-align: center;
         }
     }
 </style>

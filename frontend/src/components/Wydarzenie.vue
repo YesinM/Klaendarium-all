@@ -2,10 +2,11 @@
     import {ref, onMounted, reactive, watch} from 'vue';
     import dayjs from 'dayjs'
     import 'dayjs/locale/pl'
+    import { useDisplay } from 'vuetify/lib/composables/display';
     import { useRouter, useRoute } from 'vue-router';
     import { initQuill } from '@/quill/quill';
 
-
+    const display = useDisplay();
     dayjs.locale('pl');
     const router = useRouter();
     const route = useRoute();
@@ -31,7 +32,10 @@
 
 
     })
-    
+    const dateRange = ref([]);
+    const formatDatePicker = (date) => {
+        return `${dayjs(dateRange.value[0]).format('DD.MM.YYYY HH:mm')} - ${dayjs(dateRange.value[1]).format('DD.MM.YYYY HH:mm')}`
+    }
     function resetFormData() {
         dataWydarzenia.Alias = '';
         dataWydarzenia.Opis = '';
@@ -39,6 +43,7 @@
         dataWydarzenia.DataStop = today;
         dataWydarzenia.Organizator = 'Akademia Łomżyńska';
         dataWydarzenia.Lokalizacja = 'Akademicka';
+        dataWydarzenia.Aktywne = false;
         if (quill) quill.innerHTML = '';
     }
     const timeStart = ref(new Date)
@@ -49,13 +54,22 @@
     })
 
     async function fillForm(data) {
-        dataWydarzenia.Alias = data.Nazwa || '';
+        dataWydarzenia.Alias = data.Alias || '';
+        dataWydarzenia.Nazwa = data.Nazwa || '';
         dataWydarzenia.Opis = data.Opis || '';
         dataWydarzenia.Organizator = data.Organizator || '';
         dataWydarzenia.Lokalizacja = data.Lokalizacja || '';
         dataWydarzenia.DataStart = data.DataStart || '';
         dataWydarzenia.DataStop = data.DataStop || '';
+        dataWydarzenia.Aktywne = data.Aktywne || false;
+        dateRange.value[0] = dataWydarzenia.DataStart;
+        dateRange.value[1] = dataWydarzenia.DataStop;
     }
+
+    watch(dateRange, ()=>{
+        dataWydarzenia.DataStart=dateRange.value[0].toISOString();
+        dataWydarzenia.DataStop=dateRange.value[1].toISOString();
+    })
 
     async function GetDataWydarzenia() {
         if (alias) {
@@ -67,18 +81,38 @@
         }
     }
     
-    function makeVisibleDatepicker(){
-
-    }
-
     let quill = null;
 
-    function saveEvent() {
-        
-    }
+    async function saveEvent() {
+        if (route.path === '/kalendarium/dodaj') {
+          await fetch(`/api/zapisz`, {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(dataWydarzenia)
+                }) 
+                router.replace('/kalendarium')
+        } else {
+            await fetch(`/api/${dataWydarzenia.Alias}`, {
+                method: "PUT",
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(dataWydarzenia)
+                }) 
+                router.replace('/kalendarium')
+            }
+        }
 
-    function visibilytyEvent() {
-        
+    async function visibilytyEvent() {
+        const response = await fetch(`/api/visibility-switcher/${dataWydarzenia.Alias}`, {
+            method: 'PUT',
+        });
+
+        if (response.ok) {
+            dataWydarzenia.Aktywne = !dataWydarzenia.Aktywne
+        }
     }
 
     async function deleteEvent() {
@@ -118,10 +152,6 @@
 
 
 <template>
-    <link rel="stylesheet" href="/src/assets/css/bootstrap.min.css"/>
-    <link rel="stylesheet" href="/src/assets/css/template.css"/>
-    <link rel="stylesheet" href="/src/assets/css/kalendarium.css"/>
-    <link rel="stylesheet" href="/src/assets/css/przyciski.css"/>
     <link rel="stylesheet" href="/src/assets/css/wydarzenieContent.css"/>
     <link rel="stylesheet" href="/src/assets/css/footer.css"/>
     <!--  -->
@@ -129,7 +159,15 @@
 
     <main class="content">
         <div class="buttons ms-20">
-            <v-btn class="vbuttons" 
+            <v-btn icon="$edit" v-if="display.smAndDown.value"
+            class="vbuttons"
+            rounded="xs"
+            color="#000080"
+            
+            @click="saveEvent"
+            variant="flat">
+            </v-btn>
+            <v-btn v-else class="vbuttons" 
             
             density="comfortable"
             rounded="xs"
@@ -141,7 +179,14 @@
             <v-icon icon="$edit" start/>
             Zapisz
             </v-btn>
-            <v-btn class="vbuttons" 
+            <v-btn :icon= "dataWydarzenia.Aktywne ? '$radioOn':'$radioOff'" v-if="display.smAndDown.value"
+            class="vbuttons"
+
+            rounded="xs"
+            color="orange-darken-2"
+            variant="flat"
+            @click="visibilytyEvent"></v-btn>
+            <v-btn v-else class="vbuttons" 
             prepend-icon=""
             density="comfortable"
             rounded="xs"
@@ -149,30 +194,43 @@
             variant="flat"
             @click="visibilytyEvent"
             >
-            <v-icon icon="$radioOff" start=""/>
+            <v-icon :icon= "dataWydarzenia.Aktywne ? '$radioOn':'$radioOff'" start=""/>
             Widoczny</v-btn>
-            <v-btn class="vbuttons"
+
+            <v-btn icon="$cancel" v-if="display.smAndDown.value"
+            class="vbuttons"
+
+            rounded="xs"
+            color="red"
+            @click="deleteEvent"
+            :variant= "flat"></v-btn>
+            <v-btn v-else class="vbuttons"
             density="comfortable"
             rounded="xs"
             color="red"
             @click="deleteEvent"
-            variant="flat"
+            :variant= "flat"
             >
             <v-icon icon="$cancel" start=""/>
             Usuń</v-btn>
         </div>
         <div id="alias">
             <span class="module-event-date">{{day}} {{month}} {{year}}</span>
-            <input v-model="dataWydarzenia.Alias" id="inputAlias" placeholder="Tytuł" />
+            <input v-model="dataWydarzenia.Nazwa" id="inputAlias" placeholder="Tytuł" />
         </div>
         <div class=info>
-            <p>Godzina: <v-btn variant="flat" @click="makeVisibleDatepicker">{{ dataWydarzenia.DataStart}}</v-btn></p>
-            <v-time-picker>
+            <p>Godzina: 
+                <VueDatePicker v-model="dateRange"
+                :format="formatDatePicker" 
+                locale="pl" 
+                range 
+                class="date-picker">
 
-            </v-time-picker>
+            </VueDatePicker></p>
+            
             <p>Lokalizacja: <input v-model="dataWydarzenia.Lokalizacja" class="infoSpan" contenteditable="true" spellcheck="false" @input="autoWidth"></input></p>
             <p>Organizator: <input v-model="dataWydarzenia.Organizator" class="infoSpan" contenteditable="true" spellcheck="false" @input="autoWidth"></input></p>
-            <p>Opis wydarzenia: </p>
+            <p id="opis-label">Opis wydarzenia: </p>
             <div id="quill"></div>
 
         </div>
@@ -186,6 +244,28 @@
         margin-right: 10px;
         margin-top: 30px;
 
+    }
+    .v-card-text, .v-card-subtitle{
+        color: black;
+    }
+   
+    .date-picker {
+        width: 35%;
+        min-width: 320px;
+    }
+
+    @media (max-width:960px) {
+        .vbuttons {
+            margin-bottom: 30px;
+            margin-top: 0
+        }
+        .infoSpan {
+            min-width: 200px;
+
+        }
+        .buttons {
+            text-align: center;
+        }
     }
 </style>
 
