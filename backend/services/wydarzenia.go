@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"net"
 	"strings"
 
 	"strconv"
@@ -23,7 +24,7 @@ import (
 var now = time.Now()
 var today = time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, now.Location())
 
-func GenerateAlias(wydarzenie *models.Wydarzenia) {
+func GenerateAlias(wydarzenie *models.Event) {
 	prefix := ""
 	wydarzenie.Alias = strings.ReplaceAll(wydarzenie.Nazwa, " ", "-")
 	wydarzenie.Alias = strings.ToLower(wydarzenie.Alias)
@@ -34,7 +35,7 @@ func GenerateAlias(wydarzenie *models.Wydarzenia) {
 	// }
 	//dodanie do aliasu prefiksa, jeśli nie jest unikalny
 	for i := 0; ; i++ {
-		tempEvent := models.Wydarzenia{}
+		tempEvent := models.Event{}
 		if err := config.DB.Where("alias = ?", wydarzenie.Alias+prefix).First(&tempEvent).Error; err == gorm.ErrRecordNotFound {
 			wydarzenie.Alias = wydarzenie.Alias + prefix
 			break
@@ -45,11 +46,11 @@ func GenerateAlias(wydarzenie *models.Wydarzenia) {
 }
 
 func GetWydarzenieList(c *gin.Context) {
-	var wydarzenia []models.WydarzenieSummary
+	var wydarzenia []models.EventSummary
 	years := c.QueryArray("year")
 	intYears := make([]int, 0, len(years))
 
-	query := config.DB.Model(&models.Wydarzenia{})
+	query := config.DB.Model(&models.Event{})
 	query = query.Select("ID", "Nazwa", "Alias", "DataStart", "Aktywne")
 	for _, y := range years {
 		if val, err := strconv.Atoi(y); err == nil {
@@ -67,23 +68,22 @@ func GetWydarzenieList(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	fmt.Println(wydarzenia)
 	c.JSON(http.StatusOK, wydarzenia)
 }
 
 func GetWydarzenie(c *gin.Context) {
-	var wydarzenie models.Wydarzenia
+	var wydarzenie models.Event
 	aliasStr := c.Param("wydarzenie")
 	fmt.Println("alias:", aliasStr)
 	if err := config.DB.Where("alias = ?", aliasStr).First(&wydarzenie).Error; err != nil {
-		log.Fatal(err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 	}
 	c.JSON(http.StatusOK, wydarzenie)
 }
 
 func DeleteWydarzenie(c *gin.Context) {
 	aliasStr := c.Param("wydarzenie")
-	if err := config.DB.Where("alias = ?", aliasStr).Delete(&models.Wydarzenia{}).Error; err != nil {
+	if err := config.DB.Where("alias = ?", aliasStr).Delete(&models.Event{}).Error; err != nil {
 		c.JSON(400, gin.H{"Error:": err.Error()})
 		return
 	}
@@ -91,7 +91,7 @@ func DeleteWydarzenie(c *gin.Context) {
 }
 
 func SaveWydarzenie(c *gin.Context) {
-	wydarzenie := models.Wydarzenia{}
+	wydarzenie := models.Event{}
 
 	config.Connect()
 
@@ -112,7 +112,7 @@ func SaveWydarzenie(c *gin.Context) {
 
 func UpdateWydarzenie(c *gin.Context) {
 	alias := c.Param("alias")
-	wydarzenie := models.Wydarzenia{}
+	wydarzenie := models.Event{}
 	config.Connect()
 
 	if err := c.ShouldBindJSON(&wydarzenie); err != nil {
@@ -121,7 +121,7 @@ func UpdateWydarzenie(c *gin.Context) {
 		return
 	}
 
-	previousWydarzenie := models.Wydarzenia{}
+	previousWydarzenie := models.Event{}
 	if err := config.DB.Where("Alias = ?", alias).First(&previousWydarzenie).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -138,14 +138,17 @@ func UpdateWydarzenie(c *gin.Context) {
 	previousWydarzenie.Lokalizacja = wydarzenie.Lokalizacja
 
 	if err := config.DB.Save(&previousWydarzenie).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"err": "Błąd podczas aktualizacji"})
+		log.Println("Błąd podczas zapisu do bazy:", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"err": err.Error()})
+		return
 	}
+
 	c.JSON(http.StatusOK, gin.H{"message": "Updated"})
 }
 
 func VisibilitySwitcher(c *gin.Context) {
 	alias := c.Param("alias")
-	wydarzenie := models.Wydarzenia{}
+	wydarzenie := models.Event{}
 	config.Connect()
 	if err := config.DB.Where("Alias = ?", alias).First(&wydarzenie).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -162,4 +165,33 @@ func VisibilitySwitcher(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"message": "Wydarzenie nie widoczne"})
+}
+
+func IsAdmin(c *gin.Context) {
+	cidr := "192.168.0.0/16"
+	_, ipnet, err := net.ParseCIDR(cidr)
+	if err != nil {
+		panic("Incorrect subnet mask: " + err.Error())
+	}
+	ip := net.ParseIP(realIP(c))
+	fmt.Println(ip)
+
+	if ip == nil {
+		c.JSON(400, gin.H{"result": false, "message": "Invalid IP"})
+		return
+	}
+	inSubnet := ipnet.Contains(ip)
+	c.JSON(200, gin.H{"result": inSubnet})
+}
+
+func realIP(c *gin.Context) string {
+	ip := c.Request.Header.Get("X-Forwarded-For")
+	fmt.Println("ClientIP:", c.ClientIP())
+	fmt.Println("All headers:", c.Request.Header)
+
+	if ip != "" {
+		parts := strings.Split(ip, ",")
+		return strings.TrimSpace(parts[0])
+	}
+	return c.ClientIP()
 }

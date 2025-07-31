@@ -84,27 +84,23 @@
     let quill = null;
 
     async function saveEvent() {
-        if (route.path === '/kalendarium/dodaj') {
-          await fetch(`/api/zapisz`, {
-                method: "POST",
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(dataWydarzenia)
-                }) 
-                router.replace('/kalendarium')
-        } else {
-            await fetch(`/api/${dataWydarzenia.Alias}`, {
-                method: "PUT",
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(dataWydarzenia)
-                }) 
-                router.replace('/kalendarium')
-            }
-        }
+        const url = route.path === '/kalendarium/dodaj' ?
+        '/api/zapisz' :
+        `/api/${dataWydarzenia.Alias}`;
 
+        const method = route.path === '/kalendarium/dodaj' ?
+        'POST' :
+        'PUT';
+        await fetch(url, {
+            method: method,
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(dataWydarzenia)
+            }) 
+            router.replace('/kalendarium')
+    }
+    
     async function visibilytyEvent() {
         const response = await fetch(`/api/visibility-switcher/${dataWydarzenia.Alias}`, {
             method: 'PUT',

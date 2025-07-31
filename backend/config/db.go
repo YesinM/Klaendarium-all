@@ -10,7 +10,7 @@ import (
 var DB *gorm.DB
 
 func Connect() {
-	dsn := "root:k@l3nd@riumdev@tcp(db:3306)/mariadb?charset=utf8mb4&parseTime=True&loc=Local"
+	dsn := "root:k@l3nd@riumdev@tcp(db:3306)/newKalendarium?charset=utf8mb4&parseTime=True&loc=Local"
 
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {

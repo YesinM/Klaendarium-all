@@ -2,11 +2,11 @@ package models
 
 import "time"
 
-type Wydarzenia struct {
+type Event struct {
 	ID          uint       `gorm:"primaryKey;column:id"`
 	Nazwa       string     `gorm:"column:nazwa"`
 	Alias       string     `gorm:"column:alias"`
-	Opis        string     `gorm:"column:opis"`
+	Opis        string     `gorm:"column:opis";type:"text"`
 	DataStart   *time.Time `gorm:"column:data_start"`
 	DataStop    *time.Time `gorm:"column:data_stop"`
 	Organizator string     `gorm:"column:organizator"`
@@ -16,11 +16,11 @@ type Wydarzenia struct {
 	//UtwData     time.Time `gorm:"column:utw_data"`
 	//ModID            string    `gorm:"column:mod_id"`
 	//ModData          time.Time `gorm:"column:mod_data"`
-	ArtykulPowiazany string `gorm:"column:artykul_powiazany"`
-	Usuniety         int    `gorm:"column:usuniety"`
+	//ArtykulPowiazany string `gorm:"column:artykul_powiazany"`
+	//Usuniety         int    `gorm:"column:usuniety"`
 }
 
-type WydarzenieSummary struct {
+type EventSummary struct {
 	ID        uint       `gorm:"primaryKey;column:id"`
 	Nazwa     string     `gorm:"column:nazwa"`
 	Alias     string     `gorm:"column:alias"`

@@ -1,15 +1,13 @@
 <script setup>
-import {ref} from 'vue'
+function loginCAS() {
+  const returnUrl = encodeURIComponent(window.location.origin + "/frontend")
+  window.location.href = `/api/login`
+}
 
-const zalogowany = ref(true);
-const isLoaded = ref(false);
 
-window.addEventListener('load', () => {
-    isLoaded.value = true;
-})
 </script>
 
-<template v-if="isLoaded" class="page-wrapper">
+<template class="page-wrapper">
     <v-app>
     <link rel="stylesheet" href="/src/assets/css/footer.css"/>
     <link rel="stylesheet" href="/src/assets/css/wydarzenieContent.css"/>
@@ -30,6 +28,10 @@ window.addEventListener('load', () => {
                     color="grey-lighten-5">
                         Dodaj
                         <v-icon icon="$plus"></v-icon>
+                    </v-btn>
+                    <v-btn @click="loginCAS">
+                        Zaloguj się
+                        <v-icon icon="$enter" />
                     </v-btn>
                 </div>
             </v-toolbar>
