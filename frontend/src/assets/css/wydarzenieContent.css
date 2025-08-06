@@ -60,21 +60,23 @@
     outline: none;
     background: whitesmoke;
     border-radius: 15px;
-    margin-left: 30px;
     width: 1500px;
     
 }
 
-#opis-label{
+/* #opis-label{
     padding: 15px 0px;
-}
+} */
 
+.info > p, .info > span {
+    margin-bottom: 1.25rem;
+}
 
 .infoSpan {
     font-weight: bold;
     border: none;
     padding-bottom: 10px;
-    width:100%
+    width:75%
 }
 .ql-container{
     font-size: 1rem;
@@ -107,6 +109,10 @@
 }
 .red-link {
     color: rgb(190, 30, 45);
+}
+.eventCategory {
+    width: auto;
+    height: 75px;
 }
 @media (max-width: 680px){
     .eventList > div{

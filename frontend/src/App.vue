@@ -31,7 +31,6 @@ function loginCAS() {
                     </v-btn>
                     <v-btn @click="loginCAS">
                         Zaloguj się
-                        <v-icon icon="$enter" />
                     </v-btn>
                 </div>
             </v-toolbar>
@@ -68,12 +67,12 @@ function loginCAS() {
         <v-divider vertical class="ma-0"></v-divider>
 
         <div class="d-flex flex-wrap justify-center ga-3">
-        <a href="/" class="text-decoration-none text-secondary">Deklaracja dostępności</a>
-        <a href="/" class="text-decoration-none text-secondary">USOSweb</a>
-        <a href="/" class="text-decoration-none text-secondary">Poczta</a>
-        <a href="/" class="text-decoration-none text-secondary">Mapa strony</a>
-        <a href="/" class="text-decoration-none text-secondary">Pomoc</a>
-        <a href="/" class="text-decoration-none text-secondary">Kontakt</a>
+        <a href="http://al.edu.pl/deklaracja-dostepnosci" class="text-decoration-none text-secondary">Deklaracja dostępności</a>
+        <a href="http://usosweb.al.edu.pl" class="text-decoration-none text-secondary">USOSweb</a>
+        <a href="http://poczta.al.edu.pl" class="text-decoration-none text-secondary">Poczta</a>
+        <a href="http://al.edu.pl/mapa-strony" class="text-decoration-none text-secondary">Mapa strony</a>
+        <a href="http://al.edu.pl/pomoc" class="text-decoration-none text-secondary">Pomoc</a>
+        <a href="http://al.edu.pl/kontankt" class="text-decoration-none text-secondary">Kontakt</a>
         </div>
     </div>
     </v-footer>

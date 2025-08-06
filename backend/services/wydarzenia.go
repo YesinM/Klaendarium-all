@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"log"
-	"net"
 	"strings"
 
 	"strconv"
@@ -23,6 +22,11 @@ import (
 
 var now = time.Now()
 var today = time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, now.Location())
+var adminStatus = true
+
+func IsAdmin(c *gin.Context) {
+	c.JSON(http.StatusOK, gin.H{"admin": adminStatus})
+}
 
 func GenerateAlias(wydarzenie *models.Event) {
 	prefix := ""
@@ -74,7 +78,6 @@ func GetWydarzenieList(c *gin.Context) {
 func GetWydarzenie(c *gin.Context) {
 	var wydarzenie models.Event
 	aliasStr := c.Param("wydarzenie")
-	fmt.Println("alias:", aliasStr)
 	if err := config.DB.Where("alias = ?", aliasStr).First(&wydarzenie).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 	}
@@ -82,6 +85,10 @@ func GetWydarzenie(c *gin.Context) {
 }
 
 func DeleteWydarzenie(c *gin.Context) {
+	if !adminStatus {
+		c.JSON(http.StatusForbidden, gin.H{"error": "access denied"})
+		return
+	}
 	aliasStr := c.Param("wydarzenie")
 	if err := config.DB.Where("alias = ?", aliasStr).Delete(&models.Event{}).Error; err != nil {
 		c.JSON(400, gin.H{"Error:": err.Error()})
@@ -91,6 +98,12 @@ func DeleteWydarzenie(c *gin.Context) {
 }
 
 func SaveWydarzenie(c *gin.Context) {
+
+	if !adminStatus {
+		c.JSON(http.StatusForbidden, gin.H{"error": "access denied"})
+		return
+	}
+
 	wydarzenie := models.Event{}
 
 	config.Connect()
@@ -111,6 +124,12 @@ func SaveWydarzenie(c *gin.Context) {
 }
 
 func UpdateWydarzenie(c *gin.Context) {
+
+	if !adminStatus {
+		c.JSON(http.StatusForbidden, gin.H{"error": "access denied"})
+		return
+	}
+
 	alias := c.Param("alias")
 	wydarzenie := models.Event{}
 	config.Connect()
@@ -147,6 +166,12 @@ func UpdateWydarzenie(c *gin.Context) {
 }
 
 func VisibilitySwitcher(c *gin.Context) {
+
+	if !adminStatus {
+		c.JSON(http.StatusForbidden, gin.H{"error": "access denied"})
+		return
+	}
+
 	alias := c.Param("alias")
 	wydarzenie := models.Event{}
 	config.Connect()
@@ -165,23 +190,6 @@ func VisibilitySwitcher(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"message": "Wydarzenie nie widoczne"})
-}
-
-func IsAdmin(c *gin.Context) {
-	cidr := "192.168.0.0/16"
-	_, ipnet, err := net.ParseCIDR(cidr)
-	if err != nil {
-		panic("Incorrect subnet mask: " + err.Error())
-	}
-	ip := net.ParseIP(realIP(c))
-	fmt.Println(ip)
-
-	if ip == nil {
-		c.JSON(400, gin.H{"result": false, "message": "Invalid IP"})
-		return
-	}
-	inSubnet := ipnet.Contains(ip)
-	c.JSON(200, gin.H{"result": inSubnet})
 }
 
 func realIP(c *gin.Context) string {

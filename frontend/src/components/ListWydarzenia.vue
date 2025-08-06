@@ -30,6 +30,14 @@ function getCurrentYear() {
   return new Date().getFullYear()
 }
 
+const adminStatus = ref(false)
+
+ async function isAdmin() {
+    const res = await fetch('/api/isAdmin');
+    const data = await res.json();
+    await console.log("AdminStatus " + data.admin)
+    return data.admin
+}
 
 
 const currentPage = ref(1)
@@ -40,7 +48,6 @@ const numberOfPages = ref(0)
 const chosedYears = ref([])
 async function fetchItems(){
     numberOfPages.value = 0
-    console.log('Żyję!')
     const params = new URLSearchParams();
     chosedYears.value.forEach(year => {
         params.append("year", year)
@@ -52,9 +59,6 @@ async function fetchItems(){
     numberOfPages.value = await Math.ceil((dateList.value.length) / 12)
 }
 
-function isActive(active){
-    return 
-}
 
 const paginatedList = computed (()=>{
     const s = (currentPage.value - 1) * 12;
@@ -62,15 +66,19 @@ const paginatedList = computed (()=>{
     return dateList.value.slice(s, e);
 })
 
+function conditionUserView() {
+    return data.Aktywne && adminStatus.value
+}
+
 watch(chosedYears, () => {
     currentPage.value = 1
     fetchItems();
     
 })
-console.log(display.smAndDown.value)
-onMounted(()=>{
+
+onMounted(async () => {
+    adminStatus.value = await isAdmin();
     fetchItems();
-    console.log(display.smAndDown.value)
 })
 
 
@@ -94,7 +102,8 @@ onMounted(()=>{
         <div class="eventList">
             <div v-for="date in paginatedList" :key='date.id'>
                 <router-link :to="`/kalendarium/${date.Alias}`">
-                <v-card :variant = "date.Aktywne ? 'flat' : 'plain'"
+                <v-card 
+                :variant = "date.Aktywne ? 'flat' : 'plain'"
                     class="eventCard">
                     <v-card-title></v-card-title>
                     <v-card-subtitle

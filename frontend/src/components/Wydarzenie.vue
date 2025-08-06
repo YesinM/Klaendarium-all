@@ -121,27 +121,29 @@
         await router.replace('/kalendarium');
     }
 
+    const adminStatus = ref(false);
+    async function isAdmin() {
+        const res = await fetch('/api/isAdmin');
+        const data = await res.json();
+        await console.log("AdminStatus " + data.admin)
+        return data.admin
+    }
     onMounted(async () => {
         if (route.path == '/kalendarium/dodaj') { 
             resetFormData();
         }
-        if (alias){
-            await GetDataWydarzenia()
-            today = dayjs(dataWydarzenia.DataStart)
-            month.value = today.format('MMMM')
-            month.value = month.value.slice(0,1).charAt(0).toUpperCase() + month.value.slice(1,3) // month --> Month
-            year.value = today.format('YYYY')
-            day.value = today.format('D')
-            
-            console.log(month.value)
-            console.log(today)
-        }
-        quill = initQuill('#quill', dataWydarzenia.Opis);
-        quill.on('text-change', () => {
-            dataWydarzenia.Opis = quill.root.innerHTML;
-            console.log(dataWydarzenia.Opis)
-        });
         
+        adminStatus.value = await isAdmin();
+        console.log("adminStatus ref: " + adminStatus.value)
+        
+        if (adminStatus.value) {
+            quill = initQuill('#quill', dataWydarzenia.Opis);
+            quill.on('text-change', () => {
+                dataWydarzenia.Opis = quill.root.innerHTML;
+                console.log(dataWydarzenia.Opis)
+           });
+        
+        }
     })
 </script>
 
@@ -154,7 +156,7 @@
    
 
     <main class="content">
-        <div class="buttons ms-20">
+        <div v-if="adminStatus" class="buttons ms-20">
             <v-btn icon="$edit" v-if="display.smAndDown.value"
             class="vbuttons"
             rounded="xs"
@@ -211,23 +213,25 @@
             Usuń</v-btn>
         </div>
         <div id="alias">
-            <span class="module-event-date">{{day}} {{month}} {{year}}</span>
-            <input v-model="dataWydarzenia.Nazwa" id="inputAlias" placeholder="Tytuł" />
+            <img class="eventCategory" src="../assets/images.jpg">
+            <input v-model="dataWydarzenia.Nazwa" id="inputAlias" placeholder="Tytuł" :readOnly="!adminStatus"/>
         </div>
         <div class=info>
-            <p>Godzina: 
+            <span style="display:inline-flex; align-items: center;">Godzina: &nbsp; 
                 <VueDatePicker v-model="dateRange"
+                :disabled="!adminStatus"
                 :format="formatDatePicker" 
                 locale="pl" 
                 range 
                 class="date-picker">
-
-            </VueDatePicker></p>
+                
+            </VueDatePicker></span>
             
-            <p>Lokalizacja: <input v-model="dataWydarzenia.Lokalizacja" class="infoSpan" contenteditable="true" spellcheck="false" @input="autoWidth"></input></p>
-            <p>Organizator: <input v-model="dataWydarzenia.Organizator" class="infoSpan" contenteditable="true" spellcheck="false" @input="autoWidth"></input></p>
+            <p>Lokalizacja: <input :readOnly="!adminStatus" v-model="dataWydarzenia.Lokalizacja" class="infoSpan" contenteditable="true" spellcheck="false" @input="autoWidth"></input></p>
+            <p>Organizator: <input :readOnly="!adminStatus" v-model="dataWydarzenia.Organizator" class="infoSpan" contenteditable="true" spellcheck="false" @input="autoWidth"></input></p>
             <p id="opis-label">Opis wydarzenia: </p>
-            <div id="quill"></div>
+            <div id="quill" v-if="adminStatus"></div>
+            <div id="user" v-if="!adminStatus" v-html="dataWydarzenia.Opis"></div>
 
         </div>
     </main>
