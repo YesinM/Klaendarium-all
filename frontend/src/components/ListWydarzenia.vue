@@ -11,6 +11,10 @@ const display = useDisplay();
 
 dayjs.locale('pl')
 
+function findButtonClick (text){
+    alert("szukaj")
+}
+
 function getOptions(first = 2015, last = getCurrentYear()) {
     const options = [];
     for (first; first<=last+1; first++)
@@ -87,18 +91,33 @@ onMounted(async () => {
 
 <template>
     <main class="content">
-        <v-select 
-            class = "h-33"
-            style = "width: 150px; border-radius: 25px;"
-            :items = getOptions()
-            v-model = chosedYears
-            label="Rok"
-            chips
-            multiple
-            clearable
-            density="compact"
-            variant="outlined"
-        ></v-select>
+        <div id="findHeader">
+            <v-select 
+                class = "h-33"
+                style = "width: 150px; border-radius: 25px; flex: 2"
+                :items = getOptions()
+                v-model = chosedYears
+                label="Rok"
+                chips
+                multiple
+                clearable
+                density="compact"
+                variant="outlined"
+            ></v-select>
+            <v-text-field
+                v-model="searchQuery"
+                label="Szukaj wydarzeń"
+                variant="outlined"
+                density="compact"
+                clearable
+                append-inner-icon="mdi-magnify"
+                style="flex: 5"
+                @click:append-inner="findButtonClick"
+                >
+        </v-text-field>
+
+
+        </div>
         <div class="eventList">
             <div v-for="date in paginatedList" :key='date.id'>
                 <router-link :to="`/kalendarium/${date.Alias}`">

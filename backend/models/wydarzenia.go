@@ -27,3 +27,10 @@ type EventSummary struct {
 	DataStart *time.Time `gorm:"column:data_start"`
 	Aktywne   bool       `gorm:"column:aktywne"`
 }
+
+type EventCalendarType struct {
+	ID        uint       `gorm:"primaryKey;column:id"`
+	Nazwa     string     `gorm:"column:nazwa"`
+	DataStart *time.Time `gorm:"column:data_start"`
+	Alias     string     `gorm:"column:alias"`
+}

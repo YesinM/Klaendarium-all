@@ -49,6 +49,18 @@ func GenerateAlias(wydarzenie *models.Event) {
 	}
 }
 
+func GetCalendarData(c *gin.Context) {
+	var wydarzenia []models.EventCalendarType
+	query := config.DB.Model(&models.Event{})
+	query = query.Select("ID", "Nazwa", "DataStart", "Alias")
+	if err := query.Find(&wydarzenia).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, wydarzenia)
+
+}
+
 func GetWydarzenieList(c *gin.Context) {
 	var wydarzenia []models.EventSummary
 	years := c.QueryArray("year")
@@ -65,7 +77,7 @@ func GetWydarzenieList(c *gin.Context) {
 	if len(intYears) > 0 {
 		query = query.Order("data_start DESC").Where("YEAR(data_start) IN ?", intYears)
 	} else {
-		query = query.Order("data_start DESC").Where("data_start > ?", today)
+		query = query.Order("data_stop DESC").Where("data_stop > ?", today)
 	}
 
 	if err := query.Find(&wydarzenia).Error; err != nil {

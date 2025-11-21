@@ -1,8 +1,46 @@
 <script setup>
+import { useRouter } from 'vue-router';
+import { ref, onMounted} from 'vue';
 function loginCAS() {
-  const returnUrl = encodeURIComponent(window.location.origin + "/frontend")
-  window.location.href = `/api/login`
+  const returnUrl = encodeURIComponent(window.location.origin + "/frontend");
+  window.location.href = `/api/login`;
 }
+
+const calendarAttr = ref([])
+const router = useRouter()
+
+function onDayClick(day) {
+  const eventsOnDay = calendarAttr.value.filter(
+    ev => ev.dates.toDateString() === day.date.toDateString()
+  )
+
+  if (eventsOnDay.length === 1) {
+    router.push(eventsOnDay[0].url)
+  }
+
+}
+
+
+
+
+onMounted(async()=>{
+    const response = await fetch('/api/allC');
+    const data = await response.json()
+    calendarAttr.value = data.map(item=> ({
+        key: item.ID,
+        dates: new Date(item.DataStart),
+        highlight: {
+            color: 'red',
+            fillMode: 'solid'
+        },
+        popover: {
+            label: item.Nazwa
+        },
+        url: `/kalendarium/${item.Alias}`
+    }))
+
+
+})
 
 
 </script>
@@ -48,9 +86,18 @@ function loginCAS() {
         </div> -->
         </nav>
     </header>
-    <div class="content">
-        <router-view></router-view>
+    <div id="page">
+        <div class="content">
+            <router-view></router-view>
+        </div>
+        <div id="calendar">
+            <VCalendar locale="pl"
+            :attributes="calendarAttr"
+             popover-trigger="hover"
+             @dayclick="onDayClick"/>
+        </div>
     </div>
+
     <v-footer class="bg-grey-lighten-4 py-0 flex-column w-100 " height="auto">
 
     <div class="text-body-2 left-0 d-flex ga-2 my-3">

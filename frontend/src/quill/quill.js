@@ -15,7 +15,7 @@ export function initQuill(selector, tresc) { //tresc
     [{ script: 'sub' }, { script: 'super' }],
     [{ indent: '-1' }, { indent: '+1' }],
     [{ direction: 'rtl' }],
-    [{ font: 'Quicksand-Regular' }],
+    [{ font: 'Sans' }],
     [{ align: [] }],
     ['table-better'],
     ['clean']

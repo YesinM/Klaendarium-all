@@ -1,5 +1,5 @@
 <script setup>
-    import {ref, onMounted, reactive, watch} from 'vue';
+    import {ref, onMounted, reactive, watch, nextTick} from 'vue';
     import dayjs from 'dayjs'
     import 'dayjs/locale/pl'
     import { useDisplay } from 'vuetify/lib/composables/display';
@@ -72,13 +72,11 @@
     })
 
     async function GetDataWydarzenia() {
-        if (alias) {
             const response = await fetch(`/api/${alias}`);
             console.log(response);
             const data = await response.json();
             await fillForm(data);
             console.log(data);
-        }
     }
     
     let quill = null;
@@ -133,10 +131,23 @@
             resetFormData();
         }
         
+        if (alias){
+            await GetDataWydarzenia()
+            today = dayjs(dataWydarzenia.DataStart)
+            month.value = today.format('MMMM')
+            month.value = month.value.slice(0,1).charAt(0).toUpperCase() + month.value.slice(1,3) // month --> Month
+            year.value = today.format('YYYY')
+            day.value = today.format('D')
+            
+            console.log(month.value)
+            console.log(today)
+        }
+
         adminStatus.value = await isAdmin();
         console.log("adminStatus ref: " + adminStatus.value)
         
         if (adminStatus.value) {
+            await nextTick()
             quill = initQuill('#quill', dataWydarzenia.Opis);
             quill.on('text-change', () => {
                 dataWydarzenia.Opis = quill.root.innerHTML;
@@ -213,7 +224,6 @@
             Usuń</v-btn>
         </div>
         <div id="alias">
-            <img class="eventCategory" src="../assets/images.jpg">
             <input v-model="dataWydarzenia.Nazwa" id="inputAlias" placeholder="Tytuł" :readOnly="!adminStatus"/>
         </div>
         <div class=info>
