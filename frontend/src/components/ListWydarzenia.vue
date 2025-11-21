@@ -8,12 +8,35 @@ import { useDisplay } from 'vuetify/lib/composables/display';
 
 
 const display = useDisplay();
+const searchQuery = ref("")
+const currentPage = ref(1)
+const dateList = ref([])
+const numberOfPages = ref(0)
+const chosedYears = ref([])
+const adminStatus = ref(false)
+
 
 dayjs.locale('pl')
 
-function findButtonClick (text){
-    alert("szukaj")
+async function findButtonClick() {
+  if (searchQuery.value.length > 0) {
+    numberOfPages.value = 0;
+
+    const params = new URLSearchParams();
+    params.append("title", searchQuery.value);
+
+    try {
+        const response = await fetch(`/api/allT?${params.toString()}`);
+        if (!response.ok) throw new Error("Ошибка запроса");
+        const data = await response.json();
+        dateList.value = data;
+        numberOfPages.value = Math.ceil(dateList.value.length / 12); 
+    } catch (err) {
+        console.error(err);
+    }
+  }
 }
+
 
 function getOptions(first = 2015, last = getCurrentYear()) {
     const options = [];
@@ -34,7 +57,6 @@ function getCurrentYear() {
   return new Date().getFullYear()
 }
 
-const adminStatus = ref(false)
 
  async function isAdmin() {
     const res = await fetch('/api/isAdmin');
@@ -44,12 +66,7 @@ const adminStatus = ref(false)
 }
 
 
-const currentPage = ref(1)
 
-const dateList = ref([])
-const numberOfPages = ref(0)
-
-const chosedYears = ref([])
 async function fetchItems(){
     numberOfPages.value = 0
     const params = new URLSearchParams();
@@ -111,7 +128,7 @@ onMounted(async () => {
                 density="compact"
                 clearable
                 append-inner-icon="mdi-magnify"
-                style="flex: 5"
+                style="flex: 5;"
                 @click:append-inner="findButtonClick"
                 >
         </v-text-field>

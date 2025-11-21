@@ -61,13 +61,32 @@ func GetCalendarData(c *gin.Context) {
 
 }
 
+func FindByTitle(c *gin.Context) {
+	var wydarzenia []models.EventSummary
+	title := "%" + c.Query("title") + "%"
+	query := config.DB.Model(&models.Event{})
+	query = query.Select("ID", "Nazwa", "Alias", "DataStart", "Aktywne")
+
+	if len(title) > 0 {
+		query = query.Order("data_start DESC").Where("nazwa LIKE ?", title)
+	} else {
+		query = query.Order("data_stop DESC").Where("data_stop > ?", today)
+	}
+
+	if err := query.Find(&wydarzenia).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, wydarzenia)
+}
+
 func GetWydarzenieList(c *gin.Context) {
 	var wydarzenia []models.EventSummary
 	years := c.QueryArray("year")
 	intYears := make([]int, 0, len(years))
-
 	query := config.DB.Model(&models.Event{})
 	query = query.Select("ID", "Nazwa", "Alias", "DataStart", "Aktywne")
+
 	for _, y := range years {
 		if val, err := strconv.Atoi(y); err == nil {
 			intYears = append(intYears, val)

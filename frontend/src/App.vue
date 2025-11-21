@@ -51,7 +51,7 @@ onMounted(async()=>{
     <link rel="stylesheet" href="/src/assets/css/wydarzenieContent.css"/>
     <header>
         <div id="banner">
-            <img id="baner" style="height: 100%; width: 100%;" src="../src/assets/wydarzenia_baner.jpg">
+            <img id="baner" style="height: 100%; width: 100%;" src="../src/assets/al-header.jpg">
         </div>
         <nav>
             <v-toolbar class="w-100 justify-center padding" color="white">
@@ -72,18 +72,6 @@ onMounted(async()=>{
                     </v-btn>
                 </div>
             </v-toolbar>
-        <!-- <div class="middle4">
-            <ul class="breadcrumb">
-                <li class="active">Jesteś tutaj:&nbsp;&nbsp;</li>
-                <li> <a class="pathway" href="https://al.edu.pl">Start</a></li>
-                <li class="active">Kalendarium</li>
-                <li>
-                    <RouterLink to="/kalendarium/dodaj" v-if="zalogowany">
-                        <span>Dodaj wydarzenie</span>
-                    </RouterLink>
-                </li>
-            </ul>
-        </div> -->
         </nav>
     </header>
     <div id="page">
