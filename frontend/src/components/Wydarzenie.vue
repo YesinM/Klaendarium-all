@@ -1,12 +1,14 @@
 <script setup>
     import {ref, onMounted, reactive, watch, nextTick} from 'vue';
     import dayjs from 'dayjs'
+    import utc from 'dayjs/plugin/utc'
     import 'dayjs/locale/pl'
     import { useDisplay } from 'vuetify/lib/composables/display';
     import { useRouter, useRoute } from 'vue-router';
     import { initQuill } from '@/quill/quill';
 
     const display = useDisplay();
+    dayjs.extend(utc)
     dayjs.locale('pl');
     const router = useRouter();
     const route = useRoute();
@@ -46,8 +48,6 @@
         dataWydarzenia.Aktywne = false;
         if (quill) quill.innerHTML = '';
     }
-    const timeStart = ref(new Date)
-    const timeStop = ref(new Date)
     
     watch(() => route.fullPath, () => {
         resetFormData();
@@ -119,6 +119,26 @@
         await router.replace('/kalendarium');
     }
 
+    function toGoogleDateFormat(dateString) {
+        return dayjs(dateString).utc().format('YYYYMMDDTHHmmss[Z]');
+    }
+
+
+    function addToGoogleCalendar(){
+        let start = toGoogleDateFormat(dataWydarzenia.DataStart)
+        let stop = toGoogleDateFormat(dataWydarzenia.DataStop)
+
+        const url =`https://calendar.google.com/calendar/render?action=TEMPLATE` +
+        `&text=${encodeURIComponent(dataWydarzenia.Nazwa)}` +
+        `&dates=${start}/${stop}` +
+        `&details=${encodeURIComponent(dataWydarzenia.Opis || "")}` +
+        `&location=${encodeURIComponent(dataWydarzenia.Lokalizacja || "")}`
+        window.open(url, "_blank")
+    }
+
+    function backButton() {
+        router.push('/kalendarium')
+    }
     const adminStatus = ref(false);
     async function isAdmin() {
         const res = await fetch('/api/isAdmin');
@@ -126,6 +146,9 @@
         await console.log("AdminStatus " + data.admin)
         return data.admin
     }
+
+    
+
     onMounted(async () => {
         if (route.path == '/kalendarium/dodaj') { 
             resetFormData();
@@ -167,67 +190,100 @@
    
 
     <main class="content">
-        <div v-if="adminStatus" class="buttons ms-20">
-            <v-btn icon="$edit" v-if="display.smAndDown.value"
-            class="vbuttons"
-            rounded="xs"
-            color="#000080"
-            
-            @click="saveEvent"
-            variant="flat">
-            </v-btn>
-            <v-btn v-else class="vbuttons" 
-            
-            density="comfortable"
-            rounded="xs"
-            color="#000080"
-            
-            @click="saveEvent"
-            variant="flat"
-            >
-            <v-icon icon="$edit" start/>
-            Zapisz
-            </v-btn>
-            <v-btn :icon= "dataWydarzenia.Aktywne ? '$radioOn':'$radioOff'" v-if="display.smAndDown.value"
-            class="vbuttons"
+        <div  class="buttons ms-20">
+            <div v-if="adminStatus" class="editButtons">
+                <v-btn icon="$edit" v-if="display.smAndDown.value"
+                class="vbuttons"
+                rounded="xs"
+                color="#000080"
+                @click="saveEvent"
+                variant="flat">
+                </v-btn>
+                <v-btn v-else class="vbuttons" 
+                density="comfortable"
+                rounded="xs"
+                color="#000080"
+                @click="saveEvent"
+                variant="flat"
+                >
+                <v-icon icon="$edit" start/>
+                Zapisz
+                </v-btn>
 
-            rounded="xs"
-            color="orange-darken-2"
-            variant="flat"
-            @click="visibilytyEvent"></v-btn>
-            <v-btn v-else class="vbuttons" 
-            prepend-icon=""
-            density="comfortable"
-            rounded="xs"
-            color="orange-darken-2"
-            variant="flat"
-            @click="visibilytyEvent"
-            >
-            <v-icon :icon= "dataWydarzenia.Aktywne ? '$radioOn':'$radioOff'" start=""/>
-            Widoczny</v-btn>
+                <v-btn :icon= "dataWydarzenia.Aktywne ? '$radioOn':'$radioOff'" v-if="display.smAndDown.value"
+                class="vbuttons"
+                rounded="xs"
+                color="orange-darken-2"
+                variant="flat"
+                @click="visibilytyEvent"></v-btn>
+                <v-btn v-else class="vbuttons" 
+                prepend-icon=""
+                density="comfortable"
+                rounded="xs"
+                color="orange-darken-2"
+                variant="flat"
+                @click="visibilytyEvent"
+                >
+                <v-icon :icon= "dataWydarzenia.Aktywne ? '$radioOn':'$radioOff'" start=""/>
+                Widoczny</v-btn>
 
-            <v-btn icon="$cancel" v-if="display.smAndDown.value"
-            class="vbuttons"
+                <v-btn icon="$cancel" v-if="display.smAndDown.value"
+                class="vbuttons"
+                rounded="xs"
+                color="red"
+                @click="deleteEvent"
+                :variant= "flat"></v-btn>
+                <v-btn v-else class="vbuttons"
+                density="comfortable"
+                rounded="xs"
+                color="red"
+                @click="deleteEvent"
+                :variant= "flat"
+                >
+                <v-icon icon="$cancel" start=""/>
+                Usuń</v-btn>
+            </div>
+            <div class="additionalButtons">
+                <v-btn icon="$first" v-if="display.smAndDown.value"
+                class="vbuttons"
+                rounded="xs"
+                color="grey-lighten-2"
+                @click="backButton"
+                :variant= "flat"></v-btn>
+                <v-btn v-else class="vbuttons"
+                density="comfortable"
+                rounded="xs"
+                color="grey-lighten-2"
+                @click="backButton"
+                :variant= "flat"
+                >
+                <v-icon icon="$first" start=""/>
+                Wstecz</v-btn>
 
-            rounded="xs"
-            color="red"
-            @click="deleteEvent"
-            :variant= "flat"></v-btn>
-            <v-btn v-else class="vbuttons"
-            density="comfortable"
-            rounded="xs"
-            color="red"
-            @click="deleteEvent"
-            :variant= "flat"
-            >
-            <v-icon icon="$cancel" start=""/>
-            Usuń</v-btn>
+
+                <v-btn icon="$calendar" v-if="display.smAndDown.value"
+                class="vbuttons"
+                rounded="xs"
+                color="green"
+                @click="addToGoogleCalendar"
+                :variant= "flat"></v-btn>
+                <v-btn v-else class="vbuttons"
+                density="comfortable"
+                rounded="xs"
+                color="green"
+                @click="addToGoogleCalendar"
+                :variant= "flat"
+                >
+                <v-icon icon="$calendar" start=""/>
+                Google Calendar</v-btn>
+            </div>
         </div>
+
         <div id="alias">
             <input v-model="dataWydarzenia.Nazwa" id="inputAlias" placeholder="Tytuł" :readOnly="!adminStatus"/>
         </div>
         <div class=info>
-            <span style="display:inline-flex; align-items: center;">Godzina: &nbsp; 
+            <span style="display:inline-flex; align-items: center;"> 
                 <VueDatePicker v-model="dateRange"
                 :disabled="!adminStatus"
                 :format="formatDatePicker" 

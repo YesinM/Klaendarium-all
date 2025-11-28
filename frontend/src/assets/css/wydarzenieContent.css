@@ -64,7 +64,8 @@ html, body {
 }
 
 .buttons {
-    display: block;
+    display: flex;
+    justify-content: space-between;
     padding-bottom: 40px;
 }
 
@@ -166,6 +167,8 @@ html, body {
         width: 100%;
         padding: 0;
         text-align: center;
+        flex-direction: column;
+        justify-content:center;
     }
     #calendar{
         display: none;

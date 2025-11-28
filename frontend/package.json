@@ -13,6 +13,7 @@
     "@popperjs/core": "^2.11.8",
     "@vuepic/vue-datepicker": "^11.0.2",
     "dayjs": "^1.11.13",
+    "dayjs-plugin-utc": "^0.1.2",
     "pinia": "^3.0.3",
     "quill": "^2.0.3",
     "quill-table-better": "^1.1.6",
