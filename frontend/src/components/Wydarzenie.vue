@@ -244,23 +244,6 @@
                 Usuń</v-btn>
             </div>
             <div class="additionalButtons">
-                <v-btn icon="$first" v-if="display.smAndDown.value"
-                class="vbuttons"
-                rounded="xs"
-                color="grey-lighten-2"
-                @click="backButton"
-                :variant= "flat"></v-btn>
-                <v-btn v-else class="vbuttons"
-                density="comfortable"
-                rounded="xs"
-                color="grey-lighten-2"
-                @click="backButton"
-                :variant= "flat"
-                >
-                <v-icon icon="$first" start=""/>
-                Wstecz</v-btn>
-
-
                 <v-btn icon="$calendar" v-if="display.smAndDown.value"
                 class="vbuttons"
                 rounded="xs"
@@ -275,7 +258,15 @@
                 :variant= "flat"
                 >
                 <v-icon icon="$calendar" start=""/>
-                Google Calendar</v-btn>
+                Dodaj do Google Kalendarz</v-btn>
+
+                <v-btn icon="$close" 
+                class="vbuttons"
+                rounded="xs"
+                color="grey-lighten-2"
+                @click="backButton"
+                density="comfortable"
+                :variant= "flat"></v-btn>
             </div>
         </div>
 

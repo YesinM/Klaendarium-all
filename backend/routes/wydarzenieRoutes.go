@@ -22,5 +22,4 @@ func RegisterRoutes(router *gin.Engine) {
 	router.PUT("/api/visibility-switcher/:alias", services.VisibilitySwitcher)
 	router.GET("/api/isAdmin", services.IsAdmin)
 	router.GET("/api/allC", services.GetCalendarData)
-	router.GET("/api/allT", services.FindByTitle)
 }

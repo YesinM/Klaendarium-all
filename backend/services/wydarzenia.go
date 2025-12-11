@@ -83,6 +83,7 @@ func FindByTitle(c *gin.Context) {
 func GetWydarzenieList(c *gin.Context) {
 	var wydarzenia []models.EventSummary
 	years := c.QueryArray("year")
+	title := c.Query("title")
 	intYears := make([]int, 0, len(years))
 	query := config.DB.Model(&models.Event{})
 	query = query.Select("ID", "Nazwa", "Alias", "DataStart", "Aktywne")
@@ -93,10 +94,19 @@ func GetWydarzenieList(c *gin.Context) {
 		}
 	}
 
+	query = query.Order("data_start DESC")
+	fmt.Println("title = ", title)
+	fmt.Println("intYears = ", intYears)
 	if len(intYears) > 0 {
-		query = query.Order("data_start DESC").Where("YEAR(data_start) IN ?", intYears)
-	} else {
-		query = query.Order("data_stop DESC").Where("data_stop > ?", today)
+		query = query.Where("YEAR(data_start) IN ?", intYears)
+	}
+
+	if len(title) > 0 {
+		query = query.Where("nazwa LIKE ?", "%"+title+"%")
+	}
+
+	if len(intYears) == 0 && len(title) == 0 {
+		query = query.Where("data_stop > ?", today)
 	}
 
 	if err := query.Find(&wydarzenia).Error; err != nil {

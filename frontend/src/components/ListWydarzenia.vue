@@ -18,26 +18,6 @@ const adminStatus = ref(false)
 
 dayjs.locale('pl')
 
-async function findButtonClick() {
-  if (searchQuery.value.length > 0) {
-    numberOfPages.value = 0;
-
-    const params = new URLSearchParams();
-    params.append("title", searchQuery.value);
-
-    try {
-        const response = await fetch(`/api/allT?${params.toString()}`);
-        if (!response.ok) throw new Error("Ошибка запроса");
-        const data = await response.json();
-        dateList.value = data;
-        numberOfPages.value = Math.ceil(dateList.value.length / 12); 
-    } catch (err) {
-        console.error(err);
-    }
-  }
-}
-
-
 function getOptions(first = 2015, last = getCurrentYear()) {
     const options = [];
     for (first; first<=last+1; first++)
@@ -65,20 +45,32 @@ function getCurrentYear() {
     return data.admin
 }
 
+async function fetchItems() {
+  numberOfPages.value = 0;
 
+  const params = new URLSearchParams();
 
-async function fetchItems(){
-    numberOfPages.value = 0
-    const params = new URLSearchParams();
-    chosedYears.value.forEach(year => {
-        params.append("year", year)
-    });
+  if (searchQuery.value.length > 0) {
+    params.append("title", searchQuery.value);
+  }
 
+  chosedYears.value.forEach(year => {
+    params.append("year", year);
+  });
+
+  try {
     const response = await fetch(`/api/all?${params.toString()}`);
+    if (!response.ok) throw new Error("Request error");
+
     const data = await response.json();
-    dateList.value = await data;
-    numberOfPages.value = await Math.ceil((dateList.value.length) / 12)
+    dateList.value = data;
+
+    numberOfPages.value = Math.ceil(data.length / 12);
+  } catch (err) {
+    console.error(err);
+  }
 }
+
 
 
 const paginatedList = computed (()=>{
@@ -92,10 +84,14 @@ function conditionUserView() {
 }
 
 watch(chosedYears, () => {
-    currentPage.value = 1
+    currentPage.value = 1;
     fetchItems();
     
 })
+function onClear() {
+    searchQuery.value = ""; // deafault clear button changes to null
+    fetchItems();
+}
 
 onMounted(async () => {
     adminStatus.value = await isAdmin();
@@ -126,10 +122,12 @@ onMounted(async () => {
                 label="Szukaj wydarzeń"
                 variant="outlined"
                 density="compact"
-                clearable
                 append-inner-icon="mdi-magnify"
                 style="flex: 5;"
-                @click:append-inner="findButtonClick"
+                @click:append-inner="fetchItems"
+                @keyup.enter="fetchItems"
+                clearable
+                @click:clear="onClear"
                 >
         </v-text-field>
 
@@ -212,6 +210,7 @@ onMounted(async () => {
         display: flex;
         flex-flow: row wrap;
         align-items: stretch;
+        min-height: 640px;
     }
     .eventList>div{
         margin: 5px;
