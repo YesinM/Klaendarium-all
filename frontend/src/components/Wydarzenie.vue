@@ -190,7 +190,7 @@
    
 
     <main class="content">
-        <div  class="buttons ms-20">
+        <div  class="buttons">
             <div v-if="adminStatus" class="editButtons">
                 <v-btn icon="$edit" v-if="display.smAndDown.value"
                 class="vbuttons"

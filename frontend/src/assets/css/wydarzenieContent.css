@@ -17,6 +17,7 @@ html, body {
 }
 
 .content {
+    max-width: 1200px;
     flex: 4;
     margin: 0 0 0 60px;
     box-sizing: border-box;
@@ -148,7 +149,21 @@ html, body {
     #calendar{
         display: none;
     }
-    
+    .content{
+        margin: 10px !important; 
+        padding: 0px 0px 0px 0px !important;
+        justify-content: center;
+    }
+    .buttons{
+        width: 100%;
+        padding: 0;
+        flex-direction: column;
+        justify-content:center;
+    }
+    .additionalButtons{
+        margin-left: 0;
+        padding-bottom: 20px;
+    }
 }
 
 @media (max-width: 680px){
@@ -162,19 +177,7 @@ html, body {
     #inputAlias{
         min-width: 200px;
     }
-    .content{
-        margin: 10px !important; 
-        padding: 0px 0px 0px 0px !important;
-        justify-content: center;
-    }
-    .buttons
-    {
-        width: 100%;
-        padding: 0;
-        text-align: center;
-        flex-direction: column;
-        justify-content:center;
-    }
+    
     #calendar{
         display: none;
     }

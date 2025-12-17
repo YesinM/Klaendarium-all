@@ -209,7 +209,8 @@ onMounted(async () => {
     .eventList {
         display: flex;
         flex-flow: row wrap;
-        align-items: stretch;
+        align-items: flex-start;
+        align-content: flex-start;
         min-height: 640px;
     }
     .eventList>div{
