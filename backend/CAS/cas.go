@@ -35,7 +35,7 @@ func CheckSession(login string) (exists bool, isAdmin bool) {
 
 func LoginHandler(c *gin.Context) {
 	casURL := "https://cas.al.edu.pl/cas/login?service=" +
-		url.QueryEscape("https://10.37.50.87/api/callback") // <- замени на реальный URL
+		url.QueryEscape("http://10.33.43.37:70/api/callback")
 	c.Redirect(http.StatusFound, casURL)
 }
 
@@ -48,7 +48,7 @@ type casResponse struct {
 
 func ValidateCASTicket(ticket string) string {
 	serviceValidateURL := "https://cas.al.edu.pl/cas/serviceValidate?service=" +
-		url.QueryEscape("https://10.37.50.87/api/callback") +
+		url.QueryEscape("http://10.33.43.37:70/api/callback") +
 		"&ticket=" + url.QueryEscape(ticket)
 
 	resp, err := http.Get(serviceValidateURL)
@@ -80,9 +80,10 @@ func CallbackHandler(c *gin.Context) {
 
 	AddSession(login)
 
-	c.SetCookie("login", login, 3600*24, "/", "", false, true)
+	c.SetCookie("login", login, 3600*24, "/api", "", false, true)
 
-	c.Redirect(http.StatusFound, "/")
+	c.Redirect(http.StatusFound, "http://10.33.43.37:70/kalendarium")
+
 }
 
 func RequireAdmin() gin.HandlerFunc {

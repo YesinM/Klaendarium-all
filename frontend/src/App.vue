@@ -2,7 +2,6 @@
 import { useRouter } from 'vue-router';
 import { ref, onMounted} from 'vue';
 function loginCAS() {
-  const returnUrl = encodeURIComponent(window.location.origin + "/frontend");
   window.location.href = `/api/login`;
 }
 
