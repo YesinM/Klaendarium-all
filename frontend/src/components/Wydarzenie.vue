@@ -131,7 +131,6 @@
         const url =`https://calendar.google.com/calendar/render?action=TEMPLATE` +
         `&text=${encodeURIComponent(dataWydarzenia.Nazwa)}` +
         `&dates=${start}/${stop}` +
-        `&details=${encodeURIComponent(dataWydarzenia.Opis || "")}` +
         `&location=${encodeURIComponent(dataWydarzenia.Lokalizacja || "")}`
         window.open(url, "_blank")
     }

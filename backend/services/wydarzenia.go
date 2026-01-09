@@ -32,12 +32,6 @@ func GenerateAlias(wydarzenie *models.Event) {
 	prefix := ""
 	wydarzenie.Alias = strings.ReplaceAll(wydarzenie.Nazwa, " ", "-")
 	wydarzenie.Alias = strings.ToLower(wydarzenie.Alias)
-	//var count int64
-	// config.DB.Where("alias LIKE ?", wydarzenie.Alias+"%").Count(&count)
-	// if count != 0 {
-	// 	wydarzenie.Alias = wydarzenie.Alias + strconv.FormatInt(count + 1)
-	// }
-	//dodanie do aliasu prefiksa, jeśli nie jest unikalny
 	for i := 0; ; i++ {
 		tempEvent := models.Event{}
 		if err := config.DB.Where("alias = ?", wydarzenie.Alias+prefix).First(&tempEvent).Error; err == gorm.ErrRecordNotFound {
@@ -161,7 +155,7 @@ func SaveWydarzenie(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "Zapisane"})
+	c.JSON(http.StatusOK, gin.H{"message": "Zapisano"})
 }
 
 func UpdateWydarzenie(c *gin.Context) {

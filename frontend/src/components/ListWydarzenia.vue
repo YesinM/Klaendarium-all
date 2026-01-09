@@ -162,14 +162,6 @@ onMounted(async () => {
                     </v-card-actions>
                 </v-card>
                 </router-link>  
-                <!-- <div class="events-title" v-if="filteringByYear(date)"> filtrowanie za rokiem 
-                    <span class="module-event-date">
-                        {{localDate(date.DataStart)}}
-                        &nbsp;
-                    </span> 
-                    
-                </div>          -->
-            
             </div>
         </div>
     </main>

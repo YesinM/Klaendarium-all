@@ -12,12 +12,6 @@ type Event struct {
 	Organizator string     `gorm:"column:organizator"`
 	Lokalizacja string     `gorm:"column:lokalizacja"`
 	Aktywne     bool       `gorm:"column:aktywne"`
-	UtwID       string     `gorm:"column:utw_id"`
-	//UtwData     time.Time `gorm:"column:utw_data"`
-	//ModID            string    `gorm:"column:mod_id"`
-	//ModData          time.Time `gorm:"column:mod_data"`
-	//ArtykulPowiazany string `gorm:"column:artykul_powiazany"`
-	//Usuniety         int    `gorm:"column:usuniety"`
 }
 
 type EventSummary struct {
