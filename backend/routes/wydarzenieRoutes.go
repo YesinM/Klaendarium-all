@@ -15,10 +15,11 @@ func RegisterRoutes(router *gin.Engine) {
 
 	router.GET("/api/all", services.GetWydarzenieList)
 	router.GET("/api/:wydarzenie", services.GetWydarzenie)
-	router.POST("/api/zapisz", services.SaveWydarzenie)
-	router.DELETE("/api/:wydarzenie", services.DeleteWydarzenie)
-	router.PUT("/api/:alias", services.UpdateWydarzenie)
-	router.PUT("/api/visibility-switcher/:alias", services.VisibilitySwitcher)
-	router.GET("/api/isAdmin", services.IsAdmin)
+	router.POST("/api/zapisz", CAS.RequireAdmin(), services.SaveWydarzenie)
+	router.DELETE("/api/:wydarzenie", CAS.RequireAdmin(), services.DeleteWydarzenie)
+	router.PUT("/api/:alias", CAS.RequireAdmin(), services.UpdateWydarzenie)
+	router.PUT("/api/visibility-switcher/:alias", CAS.RequireAdmin(), services.VisibilitySwitcher)
+	router.GET("/api/getUserID", CAS.GetUserID)
+	router.POST("/api/logout", CAS.LogoutHandler)
 	router.GET("/api/allC", services.GetCalendarData)
 }

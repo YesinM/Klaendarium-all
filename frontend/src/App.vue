@@ -1,9 +1,21 @@
 <script setup>
 import { useRouter } from 'vue-router';
 import { ref, onMounted} from 'vue';
+import { useAuthStore } from './stores/userStore';
+
+
+const auth = useAuthStore()
+
+onMounted(async () => {
+    await auth.loadUser()
+})
+
 function loginCAS() {
-  const returnUrl = encodeURIComponent(window.location.origin + "/frontend");
   window.location.href = `/api/login`;
+}
+
+async function logout() {
+  await auth.logout()
 }
 
 const calendarAttr = ref([])
@@ -61,14 +73,17 @@ onMounted(async()=>{
                     color="#BE1E2D"
                     >
                     Start</v-btn>
-                    <v-btn to="/kalendarium/dodaj"
+                    <v-btn v-if="auth.isAdmin" to="/kalendarium/dodaj"
                     variant="flat"
                     color="grey-lighten-5">
                         Dodaj
                         <v-icon icon="$plus"></v-icon>
                     </v-btn>
-                    <v-btn @click="loginCAS">
+                    <v-btn v-if="auth.loaded && !auth.isLoggedIn" @click="loginCAS">
                         Zaloguj się
+                    </v-btn>
+                    <v-btn v-if="auth.loaded && auth.isLoggedIn" @click="logout">
+                        Wyloguj się
                     </v-btn>
                 </div>
             </v-toolbar>

@@ -6,9 +6,14 @@
     import { useDisplay } from 'vuetify/lib/composables/display';
     import { useRouter, useRoute } from 'vue-router';
     import { initQuill } from '@/quill/quill';
-
+    import 'quill/dist/quill.snow.css'
+    import 'quill-table-better/dist/quill-table-better.css'
+    import '../assets/css/quill_style.css'
+    import { useAuthStore } from '@/stores/userStore';
+    
+    const auth = useAuthStore();
     const display = useDisplay();
-    dayjs.extend(utc)
+    dayjs.extend(utc);
     dayjs.locale('pl');
     const router = useRouter();
     const route = useRoute();
@@ -98,6 +103,8 @@
             }) 
             router.replace('/kalendarium')
     }
+
+    
     
     async function visibilytyEvent() {
         const response = await fetch(`/api/visibility-switcher/${dataWydarzenia.Alias}`, {
@@ -138,13 +145,8 @@
     function backButton() {
         router.push('/kalendarium')
     }
-    const adminStatus = ref(false);
-    async function isAdmin() {
-        const res = await fetch('/api/isAdmin');
-        const data = await res.json();
-        await console.log("AdminStatus " + data.admin)
-        return data.admin
-    }
+    const adminStatus = ref(true);
+
 
     
 
@@ -165,19 +167,18 @@
             console.log(today)
         }
 
-        adminStatus.value = await isAdmin();
-        console.log("adminStatus ref: " + adminStatus.value)
-        
-        if (adminStatus.value) {
             await nextTick()
-            quill = initQuill('#quill', dataWydarzenia.Opis);
+            quill = initQuill('#quill', dataWydarzenia.Opis, auth.isAdmin);
             quill.on('text-change', () => {
                 dataWydarzenia.Opis = quill.root.innerHTML;
                 console.log(dataWydarzenia.Opis)
            });
-        
-        }
-    })
+           const activeCells = document.querySelectorAll('.ql-cell-focused'); // focesed cell problem solution
+            activeCells.forEach(cell => {
+            cell.classList.remove('ql-cell-focused');
+            cell.blur();
+        });
+        })
 </script>
 
 
@@ -190,7 +191,7 @@
 
     <main class="content">
         <div  class="buttons">
-            <div v-if="adminStatus" class="editButtons">
+            <div v-if="auth.isAdmin" class="editButtons">
                 <v-btn icon="$edit" v-if="display.smAndDown.value"
                 class="vbuttons"
                 rounded="xs"
@@ -224,7 +225,7 @@
                 @click="visibilytyEvent"
                 >
                 <v-icon :icon= "dataWydarzenia.Aktywne ? '$radioOn':'$radioOff'" start=""/>
-                Widoczny</v-btn>
+                 {{ dataWydarzenia.Aktywne ? 'Widoczny' : 'Ukryty' }}</v-btn>
 
                 <v-btn icon="$cancel" v-if="display.smAndDown.value"
                 class="vbuttons"
@@ -275,7 +276,7 @@
         <div class=info>
             <span style="display:inline-flex; align-items: center;"> 
                 <VueDatePicker v-model="dateRange"
-                :disabled="!adminStatus"
+                :disabled="!auth.isAdmin"
                 :format="formatDatePicker" 
                 locale="pl" 
                 range 
@@ -283,11 +284,11 @@
                 
             </VueDatePicker></span>
             
-            <p>Lokalizacja: <input :readOnly="!adminStatus" v-model="dataWydarzenia.Lokalizacja" class="infoSpan" contenteditable="true" spellcheck="false" @input="autoWidth"></input></p>
-            <p>Organizator: <input :readOnly="!adminStatus" v-model="dataWydarzenia.Organizator" class="infoSpan" contenteditable="true" spellcheck="false" @input="autoWidth"></input></p>
+            <p>Lokalizacja: <input :readOnly="!auth.isAdmin" v-model="dataWydarzenia.Lokalizacja" class="infoSpan" contenteditable="true" spellcheck="false" @input="autoWidth"></input></p>
+            <p>Organizator: <input :readOnly="!auth.isAdmin" v-model="dataWydarzenia.Organizator" class="infoSpan" contenteditable="true" spellcheck="false" @input="autoWidth"></input></p>
             <p id="opis-label">Opis wydarzenia: </p>
-            <div id="quill" v-if="adminStatus"></div>
-            <div id="user" v-if="!adminStatus" v-html="dataWydarzenia.Opis"></div>
+            <div id="quill"></div>
+            <!----<div id="user" v-if="!auth.isAdmin" v-html="dataWydarzenia.Opis"></div>-->
 
         </div>
     </main>

@@ -3,9 +3,10 @@ import QuillTableBetter from 'quill-table-better'
 import 'quill/dist/quill.snow.css'
 import 'quill-table-better/dist/quill-table-better.css'
 import '../assets/css/quill_style.css'
+import { readonly } from 'vue'
 Quill.register('modules/table-better', QuillTableBetter, true)
 
-export function initQuill(selector, tresc) { //tresc
+export function initQuill(selector, tresc, isAdmin) {
   const toolbarOpt = [
     ['bold', 'italic', 'strike'],
     [{ header: [2, 3, 4, false] }],
@@ -20,8 +21,9 @@ export function initQuill(selector, tresc) { //tresc
     ['table-better'],
     ['clean']
   ]
-
-  const quill = new Quill(selector, {
+  let quill
+  if (isAdmin){
+  quill = new Quill(selector, {
     theme: 'snow',
     placeholder: 'Opis...',
     modules: {
@@ -42,6 +44,15 @@ export function initQuill(selector, tresc) { //tresc
       }
     }
   })
+}
+else {
+  quill = new Quill(selector, {
+    readOnly: true,
+    modules: {
+      toolbar: null,
+    }
+  })
+}
 
   quill.on('text-change', () => {
     quill.root.querySelectorAll('img').forEach(img => {
@@ -58,5 +69,7 @@ export function initQuill(selector, tresc) { //tresc
   }
   
   quill.root.innerHTML = preDBProcessing(tresc);
+
+
   return quill
 }
