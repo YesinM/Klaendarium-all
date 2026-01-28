@@ -1,5 +1,5 @@
 <script setup>
-import { reactive, onMounted, ref, watch, defineComponent } from 'vue'
+import { onMounted, ref, watch} from 'vue'
 import dayjs from 'dayjs'
 import 'dayjs/locale/pl'
 import { computed } from 'vue';
@@ -21,7 +21,6 @@ const chosedYears = computed(() => filtersStore.chosedYears)
 watch(searchQuery, (newVal) => {
   filtersStore.setSearchQuery(newVal)
   currentPage.value = 1
-  fetchItems()
 })
 
 watch(chosedYears, (newVal) => {
@@ -103,11 +102,7 @@ function onClear() {
   fetchItems()
 }
 
-function fetchOnEnter(event) {
-  if (event.key === 'Enter') {
-    fetchItems()
-  }
-}
+
 
 onMounted(async () => {
   await fetchItems();
@@ -142,7 +137,6 @@ onMounted(async () => {
         @keyup.enter="fetchItems"
         clearable
         @click:clear="onClear"
-        @keyup="fetchOnEnter"
       >
       </v-text-field>
     </div>

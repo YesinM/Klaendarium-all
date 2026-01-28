@@ -2,7 +2,6 @@ package services
 
 import (
 	"errors"
-	"fmt"
 	"log"
 	"strings"
 
@@ -22,11 +21,6 @@ import (
 
 var now = time.Now()
 var today = time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, now.Location())
-var adminStatus = true
-
-func IsAdmin(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{"admin": adminStatus})
-}
 
 func GenerateAlias(wydarzenie *models.Event) {
 	prefix := ""
@@ -89,8 +83,6 @@ func GetWydarzenieList(c *gin.Context) {
 	}
 
 	query = query.Order("data_start DESC")
-	fmt.Println("title = ", title)
-	fmt.Println("intYears = ", intYears)
 	if len(intYears) > 0 {
 		query = query.Where("YEAR(data_start) IN ?", intYears)
 	}
@@ -120,10 +112,6 @@ func GetWydarzenie(c *gin.Context) {
 }
 
 func DeleteWydarzenie(c *gin.Context) {
-	if !adminStatus {
-		c.JSON(http.StatusForbidden, gin.H{"error": "access denied"})
-		return
-	}
 	aliasStr := c.Param("wydarzenie")
 	if err := config.DB.Where("alias = ?", aliasStr).Delete(&models.Event{}).Error; err != nil {
 		c.JSON(400, gin.H{"Error:": err.Error()})
@@ -133,12 +121,6 @@ func DeleteWydarzenie(c *gin.Context) {
 }
 
 func SaveWydarzenie(c *gin.Context) {
-
-	if !adminStatus {
-		c.JSON(http.StatusForbidden, gin.H{"error": "access denied"})
-		return
-	}
-
 	wydarzenie := models.Event{}
 
 	config.Connect()
@@ -159,12 +141,6 @@ func SaveWydarzenie(c *gin.Context) {
 }
 
 func UpdateWydarzenie(c *gin.Context) {
-
-	if !adminStatus {
-		c.JSON(http.StatusForbidden, gin.H{"error": "access denied"})
-		return
-	}
-
 	alias := c.Param("alias")
 	wydarzenie := models.Event{}
 	config.Connect()
@@ -201,12 +177,6 @@ func UpdateWydarzenie(c *gin.Context) {
 }
 
 func VisibilitySwitcher(c *gin.Context) {
-
-	if !adminStatus {
-		c.JSON(http.StatusForbidden, gin.H{"error": "access denied"})
-		return
-	}
-
 	alias := c.Param("alias")
 	wydarzenie := models.Event{}
 	config.Connect()
@@ -225,16 +195,4 @@ func VisibilitySwitcher(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"message": "Wydarzenie nie widoczne"})
-}
-
-func realIP(c *gin.Context) string {
-	ip := c.Request.Header.Get("X-Forwarded-For")
-	fmt.Println("ClientIP:", c.ClientIP())
-	fmt.Println("All headers:", c.Request.Header)
-
-	if ip != "" {
-		parts := strings.Split(ip, ",")
-		return strings.TrimSpace(parts[0])
-	}
-	return c.ClientIP()
 }
